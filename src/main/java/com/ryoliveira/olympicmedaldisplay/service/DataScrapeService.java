@@ -1,56 +1,55 @@
-package com.ryoliveira.olympicmedaldisplay.util;
+package com.ryoliveira.olympicmedaldisplay.service;
 
 import com.ryoliveira.olympicmedaldisplay.model.*;
 import org.jsoup.*;
 import org.jsoup.nodes.*;
 import org.jsoup.select.*;
 import org.slf4j.*;
-import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.*;
 
 import java.io.*;
 import java.util.*;
 
 @Service
-public class DataScrape {
+public class DataScrapeService {
 
-    Logger LOGGER = LoggerFactory.getLogger(DataScrape.class);
+    private final String BASE_URL = "https://olympics.com";
+    Logger LOGGER = LoggerFactory.getLogger(DataScrapeService.class);
 
-    @Value("${medal-standings-url}")
-    private String medalStandingsUrl;
-
-    public TeamList getStandings(){
+    public TeamList getStandings(String sport) {
+        sport = sport.toLowerCase().replaceAll("\\s+", "-");
+        LOGGER.info(sport);
+        String medalStandingsUrl = String.format("%s/tokyo-2020/olympic-games/en/results/%s/medal-standings.htm", BASE_URL, sport);
         List<Team> teams = new ArrayList<>();
 
-        try{
+        try {
             Document doc = Jsoup.connect(medalStandingsUrl).get();
-            Element medalTable = doc.select("table#medal-standing-table").get(0);
-
-            //Iterate through each row and pull needed data
-            if(medalTable != null){
+            Elements tables = doc.select("table#medal-standing-table");
+            if (tables.size() > 0) { // No tables will be found if no stats are recorded for given sport
+                Element medalTable = tables.get(0);
                 Elements rows = medalTable.select("tr");
-                for(Element row : rows.subList(1, rows.size())){ // First row isn't needed
+                //Iterate through each row and pull needed data
+                for (Element row : rows.subList(1, rows.size())) { // First row isn't needed
                     Team team = createTeam(row);
                     teams.add(team);
                 }
             }
-        }catch (IOException e){
+        } catch (IOException | IndexOutOfBoundsException e) {
             LOGGER.error(e.getMessage());
         }
 
         return new TeamList(teams);
     }
 
-    public SportsList getSportsList(){
+    public SportsList getSportsList() {
+
+        String sportsUrl = String.format("%s/tokyo-2020/en/sports/", BASE_URL);
 
         List<String> sportsList = new ArrayList<>();
 
         try {
-            Document doc = Jsoup.connect(medalStandingsUrl).get();
-
-            Elements sportsDropdown = doc.select("ul.dropdown-menu");
-            Elements sports = sportsDropdown.select("li");
-
+            Document doc = Jsoup.connect(sportsUrl).get();
+            Elements sports = doc.select("h2.tk-disciplines__title");
             sports.forEach(sport -> sportsList.add(sport.text()));
 
         } catch (IOException e) {
@@ -59,7 +58,7 @@ public class DataScrape {
         return new SportsList(sportsList);
     }
 
-    private Team createTeam(Element teamRow){
+    private Team createTeam(Element teamRow) {
         Elements teamData = teamRow.select("td");
 
         int rank = Integer.parseInt(teamData.get(0).text());
@@ -73,8 +72,6 @@ public class DataScrape {
 
         return new Team(rank, countryTag, teamName, goldMedals, silverMedals, bronzeMedals, totalMedals, rankByTotalMedals);
     }
-
-
 
 
 }

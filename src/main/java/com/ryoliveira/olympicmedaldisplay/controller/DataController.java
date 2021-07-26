@@ -1,24 +1,26 @@
 package com.ryoliveira.olympicmedaldisplay.controller;
 
 import com.ryoliveira.olympicmedaldisplay.model.*;
-import com.ryoliveira.olympicmedaldisplay.util.*;
-import org.springframework.beans.factory.annotation.*;
+import com.ryoliveira.olympicmedaldisplay.service.*;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class DataController {
 
-    @Autowired
-    private DataScrape dataScrape;
+    private final DataScrapeService dataScrapeService;
 
-    @GetMapping("/standings")
-    public TeamList getStandings(){
-        return this.dataScrape.getStandings();
+    public DataController(DataScrapeService dataScrapeService){
+        this.dataScrapeService = dataScrapeService;
+    }
+
+    @GetMapping("/{sport}/standings")
+    public TeamList getStandings(@PathVariable String sport){
+        return this.dataScrapeService.getStandings(sport);
     }
 
     @GetMapping("/sports")
     public SportsList getSportsList(){
-        return this.dataScrape.getSportsList();
+        return this.dataScrapeService.getSportsList();
     }
 
 
