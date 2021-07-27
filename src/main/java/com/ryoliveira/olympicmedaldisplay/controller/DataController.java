@@ -5,6 +5,7 @@ import com.ryoliveira.olympicmedaldisplay.service.*;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin
 public class DataController {
 
     private final DataScrapeService dataScrapeService;
