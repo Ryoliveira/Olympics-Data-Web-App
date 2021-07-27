@@ -1,0 +1,10 @@
+caption {
+  font-size: 20px;
+  text-decoration: underline;
+  font-weight: bolder;
+}
+
+table, th, tr, td{
+  margin: auto;
+  border: 1px solid black;
+}

@@ -1,6 +1,6 @@
 import React from 'react';
-import './App.css';
-import {MedalStandingTable} from "./pages/medal-standings-table";
+import './App.scss';
+import {MedalStandingTable} from "./pages/MedalStandingsPage";
 import {BrowserRouter as Router, Route} from 'react-router-dom';
 
 function App() {
