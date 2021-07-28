@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useParams} from 'react-router-dom';
 import "./MedalStandingsPage.css";
+import {SportDropdown} from "../components/SportDropdown";
 
 //Todo: Create dropdown selector for each sport
 
@@ -32,6 +33,7 @@ export const MedalStandingTable = () => {
 
     return (
         <div>
+            <SportDropdown />
             <table className="MedalTable">
                 <caption>Standings</caption>
                 <tbody>

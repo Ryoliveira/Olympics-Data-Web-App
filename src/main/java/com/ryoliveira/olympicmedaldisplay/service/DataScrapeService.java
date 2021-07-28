@@ -46,6 +46,7 @@ public class DataScrapeService {
         String sportsUrl = String.format("%s/tokyo-2020/en/sports/", BASE_URL);
 
         List<String> sportsList = new ArrayList<>();
+        sportsList.add("All Sports");
 
         try {
             Document doc = Jsoup.connect(sportsUrl).get();

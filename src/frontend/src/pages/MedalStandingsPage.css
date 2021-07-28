@@ -8,3 +8,8 @@ table, th, tr, td{
   margin: auto;
   border: 1px solid black;
 }
+
+footer{
+  position: fixed;
+  bottom: 0px;
+}
