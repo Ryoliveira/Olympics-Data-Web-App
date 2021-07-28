@@ -1,6 +1,7 @@
 package com.ryoliveira.olympicmedaldisplay.service;
 
 import com.ryoliveira.olympicmedaldisplay.model.*;
+import com.ryoliveira.olympicmedaldisplay.util.*;
 import org.jsoup.*;
 import org.jsoup.nodes.*;
 import org.jsoup.select.*;
@@ -11,7 +12,7 @@ import java.io.*;
 import java.util.*;
 
 @Service
-public class DataScrapeServiceImpl implements DataScrapeService{
+public class DataScrapeServiceImpl implements DataScrapeService {
 
     private final String BASE_URL = "https://olympics.com";
     Logger LOGGER = LoggerFactory.getLogger(DataScrapeServiceImpl.class);
@@ -57,6 +58,43 @@ public class DataScrapeServiceImpl implements DataScrapeService{
             LOGGER.error(e.getMessage());
         }
         return new SportsList(sportsList);
+    }
+
+    @Override
+    public AthleteList getAthletes(String sport) {
+        sport = sport.toLowerCase().replaceAll("\\s+", "-");
+        String athleteListUrl = String.format("%s/tokyo-2020/olympic-games/en/results/%s/athletes.htm", BASE_URL, sport);
+
+
+        String html = new SeleniumUtil().renderPage(athleteListUrl);
+        Document doc = Jsoup.parse(html);
+//        LOGGER.info(doc.html());
+        Elements playerTags = doc.select("div.playerTag");
+        for (Element playerTag : playerTags) {
+            Element athletePageLink = playerTag.selectFirst("a[href]");
+            getAthlete(athletePageLink.attr("href"));
+        }
+        if (playerTags.size() == 0) {
+            LOGGER.info("No Tags!!!");
+        }
+
+
+        return null;
+    }
+
+    @Override
+    public Athlete getAthlete(String athletePageUrl) {
+        String url = String.format("%s/tokyo-2020/olympic-games/%s", BASE_URL, athletePageUrl.substring(9));
+        //LOGGER.info(url);
+
+        try{
+            Document doc = Jsoup.connect(url).get();
+            Element name = doc.selectFirst("h1");
+            LOGGER.info(name.text());
+        }catch (IOException e){
+            LOGGER.error(e.getMessage());
+        }
+        return null;
     }
 
     private Team createTeam(Element teamRow) {

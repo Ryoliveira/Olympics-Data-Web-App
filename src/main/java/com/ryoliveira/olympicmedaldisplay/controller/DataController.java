@@ -24,5 +24,11 @@ public class DataController {
         return this.dataScrapeService.getSportsList();
     }
 
+    @GetMapping("/{sport}/athletes")
+    public AthleteList getAthletes(@PathVariable String sport){
+        return this.dataScrapeService.getAthletes(sport);
+    }
+
+
 
 }
