@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.*;
 @CrossOrigin
 public class DataController {
 
-    private final DataScrapeService dataScrapeService;
+    private final DataScrapeServiceImpl dataScrapeService;
 
-    public DataController(DataScrapeService dataScrapeService){
+    public DataController(DataScrapeServiceImpl dataScrapeService){
         this.dataScrapeService = dataScrapeService;
     }
 
