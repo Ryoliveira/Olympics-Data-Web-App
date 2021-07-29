@@ -66,19 +66,18 @@ public class DataScrapeServiceImpl implements DataScrapeService {
         String athleteListUrl = String.format("%s/tokyo-2020/olympic-games/en/results/%s/athletes.htm", BASE_URL, sport);
 
 
-        String html = new SeleniumUtil().renderPage(athleteListUrl);
-        Document doc = Jsoup.parse(html);
-//        LOGGER.info(doc.html());
-        Elements playerTags = doc.select("div.playerTag");
-        for (Element playerTag : playerTags) {
-            Element athletePageLink = playerTag.selectFirst("a[href]");
-            getAthlete(athletePageLink.attr("href"));
+        List<String> htmlPages = new SeleniumUtil().renderPage(athleteListUrl);
+        for (String page : htmlPages) {
+            Document doc = Jsoup.parse(page);
+            Elements playerTags = doc.select("div.playerTag");
+            for (Element playerTag : playerTags) {
+                Element athletePageLink = playerTag.selectFirst("a[href]");
+                getAthlete(athletePageLink.attr("href"));
+            }
+            if (playerTags.size() == 0) {
+                LOGGER.info("No Tags!!!");
+            }
         }
-        if (playerTags.size() == 0) {
-            LOGGER.info("No Tags!!!");
-        }
-
-
         return null;
     }
 
@@ -87,11 +86,11 @@ public class DataScrapeServiceImpl implements DataScrapeService {
         String url = String.format("%s/tokyo-2020/olympic-games/%s", BASE_URL, athletePageUrl.substring(9));
         //LOGGER.info(url);
 
-        try{
+        try {
             Document doc = Jsoup.connect(url).get();
             Element name = doc.selectFirst("h1");
             LOGGER.info(name.text());
-        }catch (IOException e){
+        } catch (IOException e) {
             LOGGER.error(e.getMessage());
         }
         return null;
