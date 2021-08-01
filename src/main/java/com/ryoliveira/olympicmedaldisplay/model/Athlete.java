@@ -1,8 +1,15 @@
 package com.ryoliveira.olympicmedaldisplay.model;
 
+
+import javax.persistence.*;
+
+@Entity
+@Table(name = "athlete")
 public class Athlete {
 
-
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
     private String name;
     private String photoUrl;
     private String country;
@@ -31,6 +38,10 @@ public class Athlete {
         this.birthCountry = birthCountry;
         this.placeOfResidence = placeOfResidence;
         this.residenceCountry = residenceCountry;
+    }
+
+    public Athlete() {
+
     }
 
     public String getName() {

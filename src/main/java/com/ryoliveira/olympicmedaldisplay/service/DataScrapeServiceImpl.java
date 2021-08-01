@@ -1,11 +1,13 @@
 package com.ryoliveira.olympicmedaldisplay.service;
 
 import com.ryoliveira.olympicmedaldisplay.model.*;
+import com.ryoliveira.olympicmedaldisplay.repo.*;
 import com.ryoliveira.olympicmedaldisplay.util.*;
 import org.jsoup.*;
 import org.jsoup.nodes.*;
 import org.jsoup.select.*;
 import org.slf4j.*;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.*;
 
 import java.io.*;
@@ -16,6 +18,12 @@ public class DataScrapeServiceImpl implements DataScrapeService {
 
     private final String BASE_URL = "https://olympics.com";
     Logger LOGGER = LoggerFactory.getLogger(DataScrapeServiceImpl.class);
+
+    private final AthleteRepository athleteRepo;
+
+    public DataScrapeServiceImpl(AthleteRepository athleteRepo){
+        this.athleteRepo = athleteRepo;
+    }
 
     public TeamList getStandings(String sport) {
         sport = sport.toLowerCase().replaceAll("\\s+", "-");
@@ -74,7 +82,12 @@ public class DataScrapeServiceImpl implements DataScrapeService {
             for (Element playerTag : playerTags) {
                 Element athletePageLink = playerTag.selectFirst("a[href]");
                 Athlete createdAthlete = createAthlete(athletePageLink.attr("href").substring(9));
-                athletes.add(createdAthlete);
+                if(createdAthlete != null && !athleteRepo.exists(Example.of(createdAthlete))){
+                    athleteRepo.save(createdAthlete);
+                    athletes.add(createdAthlete);
+                }else{
+                    LOGGER.info("Athlete already in database");
+                }
             }
             if (playerTags.size() == 0) {
                 LOGGER.info("No Tags!!!");

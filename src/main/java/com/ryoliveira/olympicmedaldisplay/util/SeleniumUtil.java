@@ -31,7 +31,7 @@ public class SeleniumUtil {
 
         LOGGER.info("Total Pages: " + totalPageNum);
 
-        for(int i = 0; i < totalPageNum; i++){
+        for(int i = 0; i < 5; i++){
             pages.add(chromeDriver.getPageSource());
             ex.executeScript("arguments[0].click();", nextButton);
             nextButton = chromeDriver.findElement(By.id("entries-table_next"));
