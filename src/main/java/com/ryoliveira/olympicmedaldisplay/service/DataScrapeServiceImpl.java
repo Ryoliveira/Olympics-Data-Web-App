@@ -65,35 +65,105 @@ public class DataScrapeServiceImpl implements DataScrapeService {
         sport = sport.toLowerCase().replaceAll("\\s+", "-");
         String athleteListUrl = String.format("%s/tokyo-2020/olympic-games/en/results/%s/athletes.htm", BASE_URL, sport);
 
+        List<Athlete> athletes = new ArrayList<>();
 
-        List<String> htmlPages = new SeleniumUtil().renderPage(athleteListUrl);
+        List<String> htmlPages = new SeleniumUtil().renderPages(athleteListUrl);
         for (String page : htmlPages) {
             Document doc = Jsoup.parse(page);
             Elements playerTags = doc.select("div.playerTag");
             for (Element playerTag : playerTags) {
                 Element athletePageLink = playerTag.selectFirst("a[href]");
-                getAthlete(athletePageLink.attr("href"));
+                Athlete createdAthlete = createAthlete(athletePageLink.attr("href").substring(9));
+                athletes.add(createdAthlete);
             }
             if (playerTags.size() == 0) {
                 LOGGER.info("No Tags!!!");
             }
         }
-        return null;
+        return new AthleteList(athletes);
     }
 
-    @Override
-    public Athlete getAthlete(String athletePageUrl) {
-        String url = String.format("%s/tokyo-2020/olympic-games/%s", BASE_URL, athletePageUrl.substring(9));
-        //LOGGER.info(url);
+    private Athlete createAthlete(String athletePageUrl) {
+        String url = String.format("%s/tokyo-2020/olympic-games/%s", BASE_URL, athletePageUrl);
+
+        Athlete athlete = null;
+
+        String name;
+        String photoUrl;
+        String country;
+        String countryFlagUrl;
+        String discipline;
+        String dob;
+        int age;
+        String gender;
+        String heightMeterAndFoot = null;
+        String placeOfBirth = null;
+        String birthCountry = null;
+        String placeOfResidence = null;
+        String residenceCountry = null;
 
         try {
             Document doc = Jsoup.connect(url).get();
-            Element name = doc.selectFirst("h1");
-            LOGGER.info(name.text());
-        } catch (IOException e) {
+            name = doc.selectFirst("h1").text();
+
+            Element playerBioPanel = doc.selectFirst("div.panel-bio");
+
+            photoUrl = playerBioPanel.selectFirst("img").attr("src").substring(9);
+
+            Elements rows = playerBioPanel.selectFirst("div.row").select("div.row");
+
+            Element firstRow = rows.get(1);
+            country = firstRow.selectFirst("a.country").text();
+            countryFlagUrl = firstRow.selectFirst("img.flag").attr("src").substring(9);
+
+            Element secondRow = rows.get(2);
+            discipline = secondRow.selectFirst("a").text();
+
+            Element thirdRow = rows.get(3);
+            Elements thirdRowDivs = thirdRow.select("div.col-md-6");
+
+            Elements thirdRowFirstCol = thirdRowDivs.get(0).select("div");
+            thirdRowFirstCol.select("label").remove();
+
+            dob = thirdRowFirstCol.get(1).text();
+            age = Integer.parseInt(thirdRowFirstCol.get(2).text());
+            gender = thirdRowFirstCol.get(3).text();
+
+            Elements thirdRowSecondCol = thirdRowDivs.get(1).select("div");
+
+            for(Element div : thirdRowSecondCol.subList(1, thirdRowSecondCol.size())){
+                String divText = div.text();
+                if(divText.contains("Height")){
+                    div.selectFirst("label").remove();
+                    heightMeterAndFoot = div.text();
+                }
+                if(divText.contains("Place of birth")){
+                    div.selectFirst("label").remove();
+                    placeOfBirth = div.text();
+                }
+                if(divText.contains("Birth Country")){
+                    div.selectFirst("label").remove();
+                    birthCountry = div.text();
+                }
+                if(divText.contains("Place of residence")){
+                    div.selectFirst("label").remove();
+                    placeOfResidence = div.text();
+                }
+                if(divText.contains("Residence Country")){
+                    div.selectFirst("label").remove();
+                    residenceCountry = div.text();
+                }
+
+            }
+
+            athlete = new Athlete(name, photoUrl, country, countryFlagUrl, discipline, dob, age, gender,
+                    heightMeterAndFoot, placeOfBirth, birthCountry, placeOfResidence, residenceCountry);
+
+            LOGGER.info(athlete.toString());
+        } catch (IOException | NullPointerException e) {
             LOGGER.error(e.getMessage());
         }
-        return null;
+        return athlete;
     }
 
     private Team createTeam(Element teamRow) {
@@ -110,6 +180,4 @@ public class DataScrapeServiceImpl implements DataScrapeService {
 
         return new Team(rank, countryTag, teamName, goldMedals, silverMedals, bronzeMedals, totalMedals, rankByTotalMedals);
     }
-
-
 }

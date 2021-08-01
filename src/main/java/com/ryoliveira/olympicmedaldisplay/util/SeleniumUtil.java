@@ -1,13 +1,15 @@
 package com.ryoliveira.olympicmedaldisplay.util;
 
 import org.openqa.selenium.*;
-import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.chrome.*;
+import org.slf4j.*;
 
 import java.util.*;
 
 
 public class SeleniumUtil {
+
+    Logger LOGGER = LoggerFactory.getLogger(SeleniumUtil.class);
 
     private WebDriver chromeDriver;
 
@@ -17,20 +19,25 @@ public class SeleniumUtil {
     }
 
 
-    public List<String> renderPage(String url){
-        List<String> tables = new ArrayList<>();
+    public List<String> renderPages(String url){
+        List<String> pages = new ArrayList<>();
         chromeDriver.get(url);
         WebElement nextButton = chromeDriver.findElement(By.id("entries-table_next"));;
         JavascriptExecutor ex = (JavascriptExecutor) chromeDriver;
-        do{
-            tables.add(chromeDriver.getPageSource());
+
+        List<WebElement> paginationList = chromeDriver.findElement(By.className("pagination")).findElements(By.tagName("li"));
+
+        int totalPageNum = Integer.parseInt(paginationList.get(paginationList.size()-2).getText());
+
+        LOGGER.info("Total Pages: " + totalPageNum);
+
+        for(int i = 0; i < totalPageNum; i++){
+            pages.add(chromeDriver.getPageSource());
             ex.executeScript("arguments[0].click();", nextButton);
             nextButton = chromeDriver.findElement(By.id("entries-table_next"));
-            System.out.println(tables.size());
-            //Todo: loop doesnt stop at condition, fix this!!!
-        }while(nextButton.isEnabled() && nextButton.isDisplayed());
+        }
         chromeDriver.quit();
-        return tables;
+        return pages;
     }
 
 }
