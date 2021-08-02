@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.*;
 public class DataController {
 
     private final DataScrapeServiceImpl dataScrapeService;
+    private final AthleteService athleteService;
 
-    public DataController(DataScrapeServiceImpl dataScrapeService){
+    public DataController(DataScrapeServiceImpl dataScrapeService, AthleteService athleteService){
         this.dataScrapeService = dataScrapeService;
+        this.athleteService = athleteService;
     }
 
     @GetMapping("/{sport}/standings")
@@ -24,9 +26,24 @@ public class DataController {
         return this.dataScrapeService.getSportsList();
     }
 
+    @GetMapping("/athletes")
+    public AthleteList getAllAthletes(){
+        return this.athleteService.getAllAthletes();
+    }
+
+    @GetMapping("/team/{country}/athletes")
+    public AthleteList getAllAthletesByCountry(@PathVariable String country){
+        return this.athleteService.getAllAthletesByCountry(country);
+    }
+
     @GetMapping("/{sport}/athletes")
-    public AthleteList getAthletes(@PathVariable String sport){
-        return this.dataScrapeService.getAthletes(sport);
+    public AthleteList getAllAthletesByDiscipline(@PathVariable String sport){
+        return this.athleteService.getAllAthletesByDiscipline(sport);
+    }
+
+    @GetMapping("/athlete/{name}")
+    public Athlete getAthleteByName(@PathVariable String name){
+        return this.athleteService.getAthleteByName(name);
     }
 
 

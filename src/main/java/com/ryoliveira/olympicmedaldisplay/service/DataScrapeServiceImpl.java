@@ -69,11 +69,8 @@ public class DataScrapeServiceImpl implements DataScrapeService {
     }
 
     @Override
-    public AthleteList getAthletes(String sport) {
-        sport = sport.toLowerCase().replaceAll("\\s+", "-");
-        String athleteListUrl = String.format("%s/tokyo-2020/olympic-games/en/results/%s/athletes.htm", BASE_URL, sport);
-
-        List<Athlete> athletes = new ArrayList<>();
+    public void scrapeAthletes() {
+        String athleteListUrl = String.format("%s/tokyo-2020/olympic-games/en/results/all-sports/athletes.htm", BASE_URL);
 
         List<String> htmlPages = new SeleniumUtil().renderPages(athleteListUrl);
         for (String page : htmlPages) {
@@ -82,18 +79,12 @@ public class DataScrapeServiceImpl implements DataScrapeService {
             for (Element playerTag : playerTags) {
                 Element athletePageLink = playerTag.selectFirst("a[href]");
                 Athlete createdAthlete = createAthlete(athletePageLink.attr("href").substring(9));
-                if(createdAthlete != null && !athleteRepo.exists(Example.of(createdAthlete))){
-                    athleteRepo.save(createdAthlete);
-                    athletes.add(createdAthlete);
-                }else{
-                    LOGGER.info("Athlete already in database");
-                }
+                athleteRepo.save(createdAthlete);
             }
             if (playerTags.size() == 0) {
                 LOGGER.info("No Tags!!!");
             }
         }
-        return new AthleteList(athletes);
     }
 
     private Athlete createAthlete(String athletePageUrl) {
