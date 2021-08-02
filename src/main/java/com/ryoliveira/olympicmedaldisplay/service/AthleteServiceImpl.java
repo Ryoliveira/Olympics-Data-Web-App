@@ -20,18 +20,21 @@ public class AthleteServiceImpl implements AthleteService {
     }
 
     @Override
-    public AthleteList getAllAthletes() {
-        return new AthleteList(athleteRepo.findAll());
+    public Page<Athlete> getAllAthletes(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return athleteRepo.findAll(pageable);
     }
 
     @Override
-    public AthleteList getAllAthletesByCountry(String country) {
-        return new AthleteList(this.athleteRepo.findAllByCountry(country));
+    public Page<Athlete> getAllAthletesByCountry(String country, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return this.athleteRepo.findAllByCountry(country, pageable);
     }
 
     @Override
-    public AthleteList getAllAthletesByDiscipline(String sport) {
-        return new AthleteList(this.athleteRepo.findAllByDiscipline(sport));
+    public Page<Athlete> getAllAthletesByDiscipline(String sport, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return this.athleteRepo.findAllByDiscipline(sport, pageable);
     }
 
 
