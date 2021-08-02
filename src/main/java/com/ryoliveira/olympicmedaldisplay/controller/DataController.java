@@ -11,11 +11,14 @@ public class DataController {
     private final DataScrapeServiceImpl dataScrapeService;
     private final AthleteService athleteService;
     private final TeamService teamService;
+    private final SportService sportService;
 
-    public DataController(DataScrapeServiceImpl dataScrapeService, AthleteService athleteService, TeamService teamService){
+    public DataController(DataScrapeServiceImpl dataScrapeService, AthleteService athleteService,
+                          TeamService teamService, SportService sportService){
         this.dataScrapeService = dataScrapeService;
         this.athleteService = athleteService;
         this.teamService = teamService;
+        this.sportService = sportService;
     }
 
     @GetMapping("/{sport}/standings")
@@ -25,7 +28,7 @@ public class DataController {
 
     @GetMapping("/sports")
     public SportsList getSportsList(){
-        return this.dataScrapeService.getSportsList();
+        return this.sportService.getSportList();
     }
 
     @GetMapping("/athletes")

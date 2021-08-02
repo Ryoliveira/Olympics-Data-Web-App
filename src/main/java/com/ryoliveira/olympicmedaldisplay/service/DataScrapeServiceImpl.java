@@ -7,7 +7,6 @@ import org.jsoup.*;
 import org.jsoup.nodes.*;
 import org.jsoup.select.*;
 import org.slf4j.*;
-import org.springframework.data.domain.*;
 import org.springframework.stereotype.*;
 
 import java.io.*;
