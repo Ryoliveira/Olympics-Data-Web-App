@@ -1,7 +1,6 @@
 package com.ryoliveira.olympicmedaldisplay.service;
 
 import com.ryoliveira.olympicmedaldisplay.model.*;
-import com.ryoliveira.olympicmedaldisplay.repo.*;
 import com.ryoliveira.olympicmedaldisplay.util.*;
 import org.jsoup.*;
 import org.jsoup.nodes.*;
@@ -16,12 +15,11 @@ import java.util.*;
 public class DataScrapeServiceImpl implements DataScrapeService {
 
     private final String BASE_URL = "https://olympics.com";
+    private final AthleteService athleteService;
     Logger LOGGER = LoggerFactory.getLogger(DataScrapeServiceImpl.class);
 
-    private final AthleteRepository athleteRepo;
-
-    public DataScrapeServiceImpl(AthleteRepository athleteRepo){
-        this.athleteRepo = athleteRepo;
+    public DataScrapeServiceImpl(AthleteService athleteService) {
+        this.athleteService = athleteService;
     }
 
     public TeamList getStandings(String sport) {
@@ -78,7 +76,7 @@ public class DataScrapeServiceImpl implements DataScrapeService {
             for (Element playerTag : playerTags) {
                 Element athletePageLink = playerTag.selectFirst("a[href]");
                 Athlete createdAthlete = createAthlete(athletePageLink.attr("href").substring(9));
-                athleteRepo.save(createdAthlete);
+                athleteService.saveAthlete(createdAthlete);
             }
             if (playerTags.size() == 0) {
                 LOGGER.info("No Tags!!!");
@@ -88,6 +86,7 @@ public class DataScrapeServiceImpl implements DataScrapeService {
 
     private Athlete createAthlete(String athletePageUrl) {
         String url = String.format("%s/tokyo-2020/olympic-games/%s", BASE_URL, athletePageUrl);
+        String fullPath = String.format("%s/tokyo-2020/olympic-games/", BASE_URL);
 
         Athlete athlete = null;
 
@@ -111,13 +110,13 @@ public class DataScrapeServiceImpl implements DataScrapeService {
 
             Element playerBioPanel = doc.selectFirst("div.panel-bio");
 
-            photoUrl = playerBioPanel.selectFirst("img").attr("src").substring(9);
+            photoUrl = fullPath + playerBioPanel.selectFirst("img").attr("src").substring(9);
 
             Elements rows = playerBioPanel.selectFirst("div.row").select("div.row");
 
             Element firstRow = rows.get(1);
             country = firstRow.selectFirst("a.country").text();
-            countryFlagUrl = firstRow.selectFirst("img.flag").attr("src").substring(9);
+            countryFlagUrl = fullPath + firstRow.selectFirst("img.flag").attr("src").substring(9);
 
             Element secondRow = rows.get(2);
             discipline = secondRow.selectFirst("a").text();
@@ -134,25 +133,25 @@ public class DataScrapeServiceImpl implements DataScrapeService {
 
             Elements thirdRowSecondCol = thirdRowDivs.get(1).select("div");
 
-            for(Element div : thirdRowSecondCol.subList(1, thirdRowSecondCol.size())){
+            for (Element div : thirdRowSecondCol.subList(1, thirdRowSecondCol.size())) {
                 String divText = div.text();
-                if(divText.contains("Height")){
+                if (divText.contains("Height")) {
                     div.selectFirst("label").remove();
                     heightMeterAndFoot = div.text();
                 }
-                if(divText.contains("Place of birth")){
+                if (divText.contains("Place of birth")) {
                     div.selectFirst("label").remove();
                     placeOfBirth = div.text();
                 }
-                if(divText.contains("Birth Country")){
+                if (divText.contains("Birth Country")) {
                     div.selectFirst("label").remove();
                     birthCountry = div.text();
                 }
-                if(divText.contains("Place of residence")){
+                if (divText.contains("Place of residence")) {
                     div.selectFirst("label").remove();
                     placeOfResidence = div.text();
                 }
-                if(divText.contains("Residence Country")){
+                if (divText.contains("Residence Country")) {
                     div.selectFirst("label").remove();
                     residenceCountry = div.text();
                 }

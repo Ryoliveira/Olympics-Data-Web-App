@@ -1,7 +1,7 @@
 import React, {createRef, useEffect, useState} from 'react';
 import { useHistory } from 'react-router-dom';
 
-export const SportDropdown = () => {
+export const SportDropdown = ({changeSport}) => {
 
     const [sportsList, setSportList] = useState([]);
     const history = useHistory();
@@ -9,7 +9,7 @@ export const SportDropdown = () => {
 
     function handleChangeSport(){
         let sport = selectedSport.current.value;
-        history.push(`/${sport}/standings`);
+        changeSport(sport);
     }
 
     useEffect(() => {

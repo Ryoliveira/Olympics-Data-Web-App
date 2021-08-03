@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {useParams} from 'react-router-dom';
+import {useHistory, useParams} from 'react-router-dom';
 import "./MedalStandingsPage.css";
 import {SportDropdown} from "../components/SportDropdown";
 
@@ -7,6 +7,7 @@ import {SportDropdown} from "../components/SportDropdown";
 
 export const MedalStandingTable = () => {
 
+    const history = useHistory();
     const [teamList, setTeamList] = useState([]);
     const {sport} = useParams();
 
@@ -21,6 +22,10 @@ export const MedalStandingTable = () => {
         }, [sport]
     );
 
+    const changeSport = (sport) => {
+        history.push(`/${sport}/standings`);
+    }
+
     if (teamList.length === 0) {
         return (
             <div>
@@ -33,9 +38,9 @@ export const MedalStandingTable = () => {
 
     return (
         <div>
-            <SportDropdown />
-            <table className="MedalTable">
-                <caption>Standings</caption>
+            <SportDropdown changeSport={changeSport} />
+            <h1>{sport}</h1>
+            <table className="table table-striped">
                 <tbody>
                 <tr>
                     <th>Rank</th>

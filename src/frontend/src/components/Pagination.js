@@ -1,24 +1,26 @@
 import React, {createRef} from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-export const Pagination = ({pageSize, totalPages, paginate, changePageSize}) => {
+export const Pagination = ({pageSize, totalElements, paginate, changePageSize}) => {
     const pageNumbers = [];
     const selectPageSize = createRef();
 
     const changePageSizeRef = () => {
         changePageSize(selectPageSize.current.value);
+        paginate(0); // Result back to first page
     }
 
-    for(let i = 1; i <= Math.ceil(totalPages / pageSize); i++){
+    for(let i = 1; i <= Math.ceil(totalElements / pageSize); i++){
         pageNumbers.push(i);
     }
 
     return (
         <nav>
             <ul className="pagination">
+                <li className="pagination.first" />
                 {pageNumbers.map(number => (
                     <li key={number} className="page-item">
-                        <a onClick={() => paginate(number)} href="#" className="page-link">
+                        <a onClick={() => paginate(number-1)} href="#" className="page-link">
                             {number}
                         </a>
                     </li>
