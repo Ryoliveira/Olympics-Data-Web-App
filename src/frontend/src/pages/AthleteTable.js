@@ -3,6 +3,7 @@ import "./AthleteTable.css"
 import "../App.scss"
 import {SportDropdown} from "../components/SportDropdown";
 import {Pagination} from "../components/Pagination";
+import {CountryDropdown} from "../components/CountryDropdown";
 
 
 export const AthleteTable = () => {
@@ -11,7 +12,7 @@ export const AthleteTable = () => {
     const [currentPage, setCurrentPage] = useState(0);
     const [pageSize, setPageSize] = useState(10);
     const [sport, setSport] = useState(allSportsStr);
-    const [country, setCountry] = useState("all")
+    const [country, setCountry] = useState("All")
 
     useEffect(() => {
             const fetchTeams = async () => {
@@ -19,7 +20,7 @@ export const AthleteTable = () => {
                 if(sport !== allSportsStr){
                     url = `http://localhost:8080/${sport}/athletes?page=${currentPage}&size=${pageSize}`;
                 }
-                else if(country !== 'all'){
+                else if(country !== 'All'){
                     url = `http://localhost:8080/team/${country}/athletes?page=${currentPage}&size=${pageSize}`;
                 }
                 else{
@@ -52,7 +53,10 @@ export const AthleteTable = () => {
         <div>
             <div>
                 <SportDropdown changeSport={changeSport} />
+                <CountryDropdown />
                 <h1>Athletes</h1>
+                <h1>Sport: {sport}</h1>
+                <h1>Country: {country}</h1>
             </div>
             <table className="table table-striped">
                 <tbody>
