@@ -38,6 +38,7 @@ export const AthleteTable = () => {
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
     const changePageSize = (pageSize) => setPageSize(pageSize);
     const changeSport = (sport) => setSport(sport);
+    const changeCountry = (country) => setCountry(country);
 
     if (athleteList.length === 0) {
         return (
@@ -53,7 +54,7 @@ export const AthleteTable = () => {
         <div>
             <div>
                 <SportDropdown changeSport={changeSport} />
-                <CountryDropdown />
+                <CountryDropdown changeCountry={changeCountry}/>
                 <h1>Athletes</h1>
                 <h1>Sport: {sport}</h1>
                 <h1>Country: {country}</h1>

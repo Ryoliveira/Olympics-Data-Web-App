@@ -1,20 +1,26 @@
-import React, {useEffect, useState} from "react";
+import React, {createRef, useEffect, useState} from "react";
 
 
-export const CountryDropdown = () => {
+export const CountryDropdown = ({changeCountry}) => {
     const [countryList, setCountryList] = useState([]);
+    const countrySelectRef = createRef();
 
 
     useEffect(() => {
             const fetchCountries = async () => {
                 //Using team standing endpoint. Need to create a endpoint that gathers just the team/country names
-                const response = await fetch("http://localhost:8080/all-sports/standings");
+                const response = await fetch("http://localhost:8080/countries");
                 const data = await response.json();
                 setCountryList(data);
             }
             fetchCountries();
         }, []
     );
+
+    const handleChangeCountry = () => {
+        let country = countrySelectRef.current.value;
+        changeCountry(country);
+    }
 
     if (countryList.length < 1) {
         return (
@@ -26,14 +32,14 @@ export const CountryDropdown = () => {
 
     return (
         <div>
-            <select>
-                {countryList.teams.map(team => {
+            <select ref={countrySelectRef}>
+                {countryList.countryList.map(country => {
                     return (
-                        <option value={team.teamName}>{team.teamName}</option>
+                        <option value={country.countryName}>{country.countryName}</option>
                     )
                 })}
             </select>
-            <button>Change Country</button>
+            <button onClick={handleChangeCountry}>Change Country</button>
         </div>
     );
 
