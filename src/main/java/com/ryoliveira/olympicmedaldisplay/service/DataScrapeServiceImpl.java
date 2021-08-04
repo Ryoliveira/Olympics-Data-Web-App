@@ -84,6 +84,31 @@ public class DataScrapeServiceImpl implements DataScrapeService {
         }
     }
 
+    @Override
+    public CountryList getCountryList() {
+        List<Country> countries = new ArrayList<>();
+        String countryPath = "/tokyo-2020/olympic-games/en/results/all-sports/nocs-list.htm";
+        String url = BASE_URL + countryPath;
+
+        try {
+            Document doc = Jsoup.connect(url).get();
+            Elements countryListItems = doc.selectFirst("ul.list-unstyled").select("li");
+
+            for(Element countryItem : countryListItems){
+                String countryFlagUrl = BASE_URL + "/tokyo-2020/olympic-games/" + countryItem.selectFirst("img")
+                                                                                         .attr("src")
+                                                                                         .substring(9);
+                String countryName = countryItem.text();
+                Country country = new Country(countryName, countryFlagUrl);
+                countries.add(country);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return new CountryList(countries);
+    }
+
     private Athlete createAthlete(String athletePageUrl) {
         String url = String.format("%s/tokyo-2020/olympic-games/%s", BASE_URL, athletePageUrl);
         String fullPath = String.format("%s/tokyo-2020/olympic-games/", BASE_URL);

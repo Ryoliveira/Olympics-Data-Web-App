@@ -12,12 +12,14 @@ public class DataController {
     private final AthleteService athleteService;
     private final TeamService teamService;
     private final SportService sportService;
+    private final CountryService countryService;
 
-    public DataController(DataScrapeServiceImpl dataScrapeService, AthleteService athleteService,
-                          TeamService teamService, SportService sportService){
+    public DataController(AthleteService athleteService, TeamService teamService,
+                          SportService sportService, CountryService countryService){
         this.athleteService = athleteService;
         this.teamService = teamService;
         this.sportService = sportService;
+        this.countryService = countryService;
     }
 
     @GetMapping("/{sport}/standings")
@@ -48,6 +50,11 @@ public class DataController {
     @GetMapping("/athlete/{name}")
     public Athlete getAthleteByName(@PathVariable String name){
         return this.athleteService.getAthleteByName(name);
+    }
+
+    @GetMapping("/countries")
+    public CountryList getAllCountries(){
+        return this.countryService.getCountryList();
     }
 
 
