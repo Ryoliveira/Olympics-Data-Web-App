@@ -3,8 +3,6 @@ import {useHistory, useParams} from 'react-router-dom';
 import "./MedalStandingsPage.css";
 import {SportDropdown} from "../components/SportDropdown";
 
-//Todo: Create dropdown selector for each sport
-
 export const MedalStandingTable = () => {
 
     const history = useHistory();

@@ -17,23 +17,23 @@ export const AthleteTable = () => {
 
     useEffect(() => {
             const fetchTeams = async () => {
-                let url;
+                let url = `http://localhost:8080`;
                 if(sport !== ALL_SPORTS && country !== ALL_COUNTRIES){
-                    url = `http://localhost:8080/${sport}/${country}/athletes?page=${currentPage}&size=${pageSize}`;
+                    url += `/${sport}/${country}/athletes?page=${currentPage}&size=${pageSize}`;
                 }
                 else if(sport !== ALL_SPORTS){
-                    url = `http://localhost:8080/${sport}/athletes?page=${currentPage}&size=${pageSize}`;
+                    url += `/${sport}/athletes?page=${currentPage}&size=${pageSize}`;
                 }
                 else if(country !== ALL_COUNTRIES){
-                    url = `http://localhost:8080/team/${country}/athletes?page=${currentPage}&size=${pageSize}`;
+                    url += `/team/${country}/athletes?page=${currentPage}&size=${pageSize}`;
                 }
                 else{
-                    url = `http://localhost:8080/athletes?page=${currentPage}&size=${pageSize}`;
+                    url += `/athletes?page=${currentPage}&size=${pageSize}`;
                 }
                 const response = await fetch(url);
                 const data = await response.json();
                 setAthleteList(data);
-                console.log(athleteList);
+                setCurrentPage(0);
             };
             fetchTeams();
         }, [pageSize, currentPage, sport, country]
