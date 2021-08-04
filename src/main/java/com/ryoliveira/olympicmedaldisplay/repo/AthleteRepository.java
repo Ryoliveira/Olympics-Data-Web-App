@@ -13,4 +13,6 @@ public interface AthleteRepository extends JpaRepository<Athlete, Long> {
     Optional<Athlete> findByName(String name);
 
     Page<Athlete> findAllByDiscipline(String sport, Pageable pageable);
+
+    Page<Athlete> findAllByDisciplineAndCountry(String sport, String country, Pageable pageable);
 }

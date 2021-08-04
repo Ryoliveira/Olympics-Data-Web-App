@@ -4,7 +4,6 @@ import { useHistory } from 'react-router-dom';
 export const SportDropdown = ({changeSport}) => {
 
     const [sportsList, setSportList] = useState([]);
-    const history = useHistory();
     const selectedSport = createRef();
 
     function handleChangeSport(){

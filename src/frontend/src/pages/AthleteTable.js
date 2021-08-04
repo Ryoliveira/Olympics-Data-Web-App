@@ -7,20 +7,24 @@ import {CountryDropdown} from "../components/CountryDropdown";
 
 
 export const AthleteTable = () => {
-    const allSportsStr = "All Sports";
+    const ALL_SPORTS = "All Sports";
+    const ALL_COUNTRIES = "All Countries";
     const [athleteList, setAthleteList] = useState([]);
     const [currentPage, setCurrentPage] = useState(0);
     const [pageSize, setPageSize] = useState(10);
-    const [sport, setSport] = useState(allSportsStr);
-    const [country, setCountry] = useState("All")
+    const [sport, setSport] = useState(ALL_SPORTS);
+    const [country, setCountry] = useState(ALL_COUNTRIES)
 
     useEffect(() => {
             const fetchTeams = async () => {
                 let url;
-                if(sport !== allSportsStr){
+                if(sport !== ALL_SPORTS && country !== ALL_COUNTRIES){
+                    url = `http://localhost:8080/${sport}/${country}/athletes?page=${currentPage}&size=${pageSize}`;
+                }
+                else if(sport !== ALL_SPORTS){
                     url = `http://localhost:8080/${sport}/athletes?page=${currentPage}&size=${pageSize}`;
                 }
-                else if(country !== 'All'){
+                else if(country !== ALL_COUNTRIES){
                     url = `http://localhost:8080/team/${country}/athletes?page=${currentPage}&size=${pageSize}`;
                 }
                 else{

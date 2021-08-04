@@ -93,7 +93,7 @@ public class DataScrapeServiceImpl implements DataScrapeService {
         try {
             Document doc = Jsoup.connect(url).get();
             Elements countryListItems = doc.selectFirst("ul.list-unstyled").select("li");
-
+            countries.add(new Country("All Countries", null));
             for(Element countryItem : countryListItems){
                 String countryFlagUrl = BASE_URL + "/tokyo-2020/olympic-games/" + countryItem.selectFirst("img")
                                                                                          .attr("src")

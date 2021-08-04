@@ -52,6 +52,12 @@ public class DataController {
         return this.athleteService.getAthleteByName(name);
     }
 
+    @GetMapping("/{sport}/{country}/athletes")
+    public Page<Athlete> getAthletesBySportAndCountry(@PathVariable("sport") String sport, @PathVariable("country") String country,
+                                                      @RequestParam("page") int pageNumber, @RequestParam("size") int pageSize){
+        return this.athleteService.getAthletesBySportAndCountry(sport, country, pageNumber, pageSize);
+    }
+
     @GetMapping("/countries")
     public CountryList getAllCountries(){
         return this.countryService.getCountryList();

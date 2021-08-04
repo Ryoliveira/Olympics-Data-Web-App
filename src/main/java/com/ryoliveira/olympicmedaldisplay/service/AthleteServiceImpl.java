@@ -37,6 +37,12 @@ public class AthleteServiceImpl implements AthleteService {
         return this.athleteRepo.findAllByDiscipline(sport, pageable);
     }
 
+    @Override
+    public Page<Athlete> getAthletesBySportAndCountry(String sport, String country, int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        return this.athleteRepo.findAllByDisciplineAndCountry(sport, country, pageable);
+    }
+
 
     @Override
     public Athlete getAthleteByName(String name) {

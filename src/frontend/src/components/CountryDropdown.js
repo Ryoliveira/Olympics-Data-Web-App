@@ -8,7 +8,6 @@ export const CountryDropdown = ({changeCountry}) => {
 
     useEffect(() => {
             const fetchCountries = async () => {
-                //Using team standing endpoint. Need to create a endpoint that gathers just the team/country names
                 const response = await fetch("http://localhost:8080/countries");
                 const data = await response.json();
                 setCountryList(data);
