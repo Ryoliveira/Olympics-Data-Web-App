@@ -4,17 +4,20 @@ import java.util.*;
 
 public class SportsList {
 
-    private List<String> sports;
+    private List<Sport> sports;
 
-    public SportsList(List<String> sports) {
+    public SportsList() {
+    }
+
+    public SportsList(List<Sport> sports) {
         this.sports = sports;
     }
 
-    public List<String> getSports() {
+    public List<Sport> getSports() {
         return sports;
     }
 
-    public void setSports(List<String> sports) {
+    public void setSports(List<Sport> sports) {
         this.sports = sports;
     }
 

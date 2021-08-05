@@ -51,13 +51,31 @@ public class DataScrapeServiceImpl implements DataScrapeService {
 
         String sportsUrl = String.format("%s/tokyo-2020/en/sports/", BASE_URL);
 
-        List<String> sportsList = new ArrayList<>();
-        sportsList.add("All Sports");
+        List<Sport> sportsList = new ArrayList<>();
+        sportsList.add(new Sport("All Sports", null));
 
         try {
             Document doc = Jsoup.connect(sportsUrl).get();
-            Elements sports = doc.select("h2.tk-disciplines__title");
-            sports.forEach(sport -> sportsList.add(sport.text()));
+            String cssUrl = BASE_URL + doc.select("link[rel=stylesheet]").get(1).attr("href");
+            String cssDocString = Jsoup.connect(cssUrl).get().toString();
+
+            Elements sportListItems = doc.select("li.tk-disciplines__item");
+            for(Element sportItem : sportListItems){
+                String sportName = sportItem.selectFirst("h2").text();
+
+                // Selects the name of the classname in css file where icon svg url is located
+                String cssIconClassName = sportItem.selectFirst("div").attr("class").split("\\s")[1];
+                // Selects the starting index icon classname in cssfile
+                int startIndex = cssDocString.indexOf(cssIconClassName);
+                // Find the index near the end of the icon path
+                String sportIconStr = cssIconClassName.substring(3) + ".svg";
+                // Add the length of the previous string to find index of end of path
+                int endIndex = cssDocString.indexOf(sportIconStr) + sportIconStr.length();
+                String cssSelectorSub = cssDocString.substring(startIndex, endIndex);
+                // Get substring which only includes relative path to icon and append it to base url to create absolute path
+                String iconUrl = BASE_URL + cssSelectorSub.substring(cssSelectorSub.indexOf("(")+1);
+                sportsList.add(new Sport(sportName, iconUrl));
+            }
 
         } catch (IOException e) {
             LOGGER.error(e.getMessage());
