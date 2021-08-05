@@ -18,6 +18,9 @@ export const NavBar = () => {
                 <li className="nav-item">
                     <a className="nav-link" href={"/All-Sports/standings"}>Medal Standings</a>
                 </li>
+                <li className="nav-item">
+                    <a className="nav-link" href={"/countries"}>Countries</a>
+                </li>
             </ul>
         </nav>
     )
