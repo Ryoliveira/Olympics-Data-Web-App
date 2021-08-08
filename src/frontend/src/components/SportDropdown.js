@@ -34,7 +34,7 @@ export const SportDropdown = ({changeSport}) => {
             <select ref={selectedSport}>
                 {sports.map(sport => {
                     return (
-                        <option value={sport}>{sport}</option>
+                        <option value={sport.sportName}>{sport.sportName}</option>
                     )
                 })}
             </select>

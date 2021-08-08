@@ -5,6 +5,7 @@ import {BrowserRouter as Router, Route} from 'react-router-dom';
 import {AthleteTable} from "./pages/AthleteTable";
 import {NavBar} from "./components/NavBar";
 import {CountryListPage} from "./pages/CountryListPage";
+import {SportSelectionPage} from "./pages/SportSelectionPage";
 
 function App() {
     return (
@@ -19,6 +20,9 @@ function App() {
                 </Route>
                 <Route path="/countries">
                     <CountryListPage />
+                </Route>
+                <Route path={"/sports"}>
+                    <SportSelectionPage />
                 </Route>
             </Router>
         </div>

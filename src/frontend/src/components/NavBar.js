@@ -21,6 +21,9 @@ export const NavBar = () => {
                 <li className="nav-item">
                     <a className="nav-link" href={"/countries"}>Countries</a>
                 </li>
+                <li className="nav-item">
+                    <a className="nav-link" href={"/sports"}>Sports</a>
+                </li>
             </ul>
         </nav>
     )
