@@ -1,5 +1,6 @@
 package com.ryoliveira.olympicmedaldisplay.service;
 
+import com.mysql.cj.log.*;
 import com.ryoliveira.olympicmedaldisplay.model.*;
 import com.ryoliveira.olympicmedaldisplay.util.*;
 import org.jsoup.*;
@@ -125,6 +126,70 @@ public class DataScrapeServiceImpl implements DataScrapeService {
         }
 
         return new CountryList(countries);
+    }
+
+    @Override
+    public SportInformation getSportInformation(String sport) {
+        String sportPagePath = "/tokyo-2020/en/sports/";
+        String sportsPageUrl = BASE_URL + sportPagePath + sport;
+
+        List<Article> articles = new ArrayList<>();
+        try{
+            Document doc = Jsoup.connect(sportsPageUrl).get();
+
+            Elements tabs = doc.select("a.tk-article__tabs-item--title");
+
+            LOGGER.info("Tabs Size: " + tabs.size());
+
+            if(tabs.size() == 0){
+                articles = parseArticlePage(doc);
+            }else{
+                for(Element tab : tabs){
+                    String tabUrl = tab.attr("data-href");
+                    LOGGER.info("Tab URL: " + tabUrl);
+                    Document tabDoc = Jsoup.connect(tabUrl).get();
+                    articles.addAll(parseArticlePage(tabDoc));
+                }
+            }
+
+            LOGGER.info(articles.toString());
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new SportInformation(articles);
+    }
+
+    private List<Article> parseArticlePage(Document articlePage){
+        List<Article> articles = new ArrayList<>();
+
+        Element mainArticleBody = articlePage.selectFirst("div.tk-article__body");
+
+        Element overview = mainArticleBody.selectFirst("h2:contains(Overview)");
+
+        //Some sports have a H3 tag for their article headers rather than the more common H2
+        Element eventProgrammeH2 = mainArticleBody.selectFirst("h2:contains(Event)");
+        Element eventProgramme = (eventProgrammeH2 == null) ? mainArticleBody.selectFirst("h3:contains(Event)") : eventProgrammeH2;
+        Element essenceOfTheSport = mainArticleBody.selectFirst("h2:contains(Essence of the sport)");
+
+        articles.add(extractArticleContents(overview, "p"));
+        articles.add(extractArticleContents(eventProgramme, "li"));
+        articles.add(extractArticleContents(essenceOfTheSport, "p"));
+
+        return articles;
+    }
+
+    private Article extractArticleContents(Element articleHeader, String contentTag){
+        String title = articleHeader.text();
+        List<String> contents = new ArrayList<>();
+
+        Element parent = articleHeader.parent();
+
+        for(Element sentence : parent.select(contentTag)){
+            contents.add(sentence.text());
+        }
+        Article article = new Article(title, contents);
+        LOGGER.info(article.toString());
+        return article;
     }
 
     private Athlete createAthlete(String athletePageUrl) {

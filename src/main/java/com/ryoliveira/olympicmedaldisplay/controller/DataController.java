@@ -63,6 +63,11 @@ public class DataController {
         return this.countryService.getCountryList();
     }
 
+    @GetMapping("/{sport}/information")
+    public SportInformation getSportInformation(@PathVariable String sport){
+        return this.sportService.getSportInformation(sport);
+    }
+
 
 
 }

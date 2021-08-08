@@ -17,4 +17,9 @@ public class SportServiceImpl implements SportService{
     public SportsList getSportList() {
         return this.dataScrapeService.getSportsList();
     }
+
+    @Override
+    public SportInformation getSportInformation(String sport) {
+        return this.dataScrapeService.getSportInformation(sport);
+    }
 }
