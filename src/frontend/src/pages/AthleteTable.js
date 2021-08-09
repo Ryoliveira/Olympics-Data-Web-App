@@ -30,19 +30,28 @@ export const AthleteTable = () => {
                 else{
                     url += `/athletes?page=${currentPage}&size=${pageSize}`;
                 }
+                console.log(url);
                 const response = await fetch(url);
                 const data = await response.json();
                 setAthleteList(data);
-                setCurrentPage(0);
             };
             fetchTeams();
         }, [pageSize, currentPage, sport, country]
     );
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
-    const changePageSize = (pageSize) => setPageSize(pageSize);
-    const changeSport = (sport) => setSport(sport);
-    const changeCountry = (country) => setCountry(country);
+    const changePageSize = (pageSize) => {
+        setPageSize(pageSize);
+        setCurrentPage(0);
+    }
+    const changeSport = (sport) => {
+        setSport(sport);
+        setCurrentPage(0);
+    }
+    const changeCountry = (country) => {
+        setCountry(country);
+        setCurrentPage(0);
+    }
 
     if (athleteList.length === 0) {
         return (

@@ -16,7 +16,7 @@ export const NavBar = () => {
                     <a className="nav-link" href={"/athletes"}>Athletes</a>
                 </li>
                 <li className="nav-item">
-                    <a className="nav-link" href={"/All-Sports/standings"}>Medal Standings</a>
+                    <a className="nav-link" href={"/All Sports/standings"}>Medal Standings</a>
                 </li>
                 <li className="nav-item">
                     <a className="nav-link" href={"/countries"}>Countries</a>
