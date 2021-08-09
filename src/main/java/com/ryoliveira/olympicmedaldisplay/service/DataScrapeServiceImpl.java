@@ -1,6 +1,5 @@
 package com.ryoliveira.olympicmedaldisplay.service;
 
-import com.mysql.cj.log.*;
 import com.ryoliveira.olympicmedaldisplay.model.*;
 import com.ryoliveira.olympicmedaldisplay.util.*;
 import org.jsoup.*;
@@ -24,7 +23,7 @@ public class DataScrapeServiceImpl implements DataScrapeService {
     }
 
     public TeamList getStandings(String sport) {
-        sport = sport.toLowerCase().replaceAll("\\s+", "-");
+        sport = sport.replaceAll("\\s+", "-");
         LOGGER.info(sport);
         String medalStandingsUrl = String.format("%s/tokyo-2020/olympic-games/en/results/%s/medal-standings.htm", BASE_URL, sport);
         List<Team> teams = new ArrayList<>();
@@ -128,27 +127,35 @@ public class DataScrapeServiceImpl implements DataScrapeService {
         return new CountryList(countries);
     }
 
+
+    //Todo: fix scraping with sports(Baseball/Softball && Cycling Road)
     @Override
     public SportInformation getSportInformation(String sport) {
+        sport = sport.replaceAll("\\s+", "-");
         String sportPagePath = "/tokyo-2020/en/sports/";
         String sportsPageUrl = BASE_URL + sportPagePath + sport;
 
+        String sportTitle = sport;
+        List<Tab> sportTabs = new ArrayList<>();
         List<Article> articles = new ArrayList<>();
         try{
             Document doc = Jsoup.connect(sportsPageUrl).get();
-
+            sportTitle = doc.selectFirst("h1.tk-details-sport__title").text();
             Elements tabs = doc.select("a.tk-article__tabs-item--title");
 
             LOGGER.info("Tabs Size: " + tabs.size());
 
             if(tabs.size() == 0){
                 articles = parseArticlePage(doc);
+                sportTabs.add(new Tab(null, articles));
             }else{
                 for(Element tab : tabs){
                     String tabUrl = tab.attr("data-href");
                     LOGGER.info("Tab URL: " + tabUrl);
                     Document tabDoc = Jsoup.connect(tabUrl).get();
-                    articles.addAll(parseArticlePage(tabDoc));
+                    String tabTitle = tab.text();
+                    articles = parseArticlePage(tabDoc);
+                    sportTabs.add(new Tab(tabTitle, articles));
                 }
             }
 
@@ -156,7 +163,7 @@ public class DataScrapeServiceImpl implements DataScrapeService {
         }catch (IOException e) {
             e.printStackTrace();
         }
-        return new SportInformation(articles);
+        return new SportInformation(sportTitle, sportTabs);
     }
 
     private List<Article> parseArticlePage(Document articlePage){

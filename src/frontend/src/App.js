@@ -6,6 +6,7 @@ import {AthleteTable} from "./pages/AthleteTable";
 import {NavBar} from "./components/NavBar";
 import {CountryListPage} from "./pages/CountryListPage";
 import {SportSelectionPage} from "./pages/SportSelectionPage";
+import {SportInformationPage} from "./pages/SportInformationPage";
 
 function App() {
     return (
@@ -14,6 +15,9 @@ function App() {
             <Router>
                 <Route path="/:sport/standings">
                     <MedalStandingTable />
+                </Route>
+                <Route path="/:sport/information">
+                    <SportInformationPage />
                 </Route>
                 <Route path="/athletes">
                     <AthleteTable />

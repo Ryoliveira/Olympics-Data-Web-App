@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import "./SportSelectionPage.css";
+import {Link} from "react-router-dom";
 
 export const SportSelectionPage = () => {
 
@@ -29,10 +30,10 @@ export const SportSelectionPage = () => {
       <div className="SportGrid">
           {sports.slice(1).map(sport => {
               return(
-                  <div className="SportItem">
+                  <Link className="SportItem" to={`/${sport.sportName}/information`}>
                       <img src={sport.sportIconUrl} className="SportIcon"/>
                       <h3 className="SportName">{sport.sportName}</h3>
-                  </div>
+                  </Link>
               );
           })}
       </div>
