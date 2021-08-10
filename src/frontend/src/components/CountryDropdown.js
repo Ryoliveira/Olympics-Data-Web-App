@@ -17,8 +17,7 @@ export const CountryDropdown = ({changeCountry}) => {
     );
 
     const handleChangeCountry = () => {
-        let country = countrySelectRef.current.value;
-        changeCountry(country);
+        changeCountry(countrySelectRef.current.value);
     }
 
     if (countryList.length < 1) {
@@ -34,7 +33,7 @@ export const CountryDropdown = ({changeCountry}) => {
             <select ref={countrySelectRef}>
                 {countryList.countryList.map(country => {
                     return (
-                        <option value={country.countryName}>{country.countryName}</option>
+                        <option key={country.countryName} value={country.countryName}>{country.countryName}</option>
                     )
                 })}
             </select>

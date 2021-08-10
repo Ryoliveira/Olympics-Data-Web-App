@@ -28,9 +28,9 @@ export const CountryListPage = () => {
             <div className="divGrid">
                 {countryList.countryList.slice(1).map(country => {
                     return (
-                        <div>
+                        <div key={country.countryName}>
                             <div>
-                                <img className={"countryFlag"} src={country.countryFlagUrl}/>
+                                <img className={"countryFlag"} src={country.countryFlagUrl} alt={country.countryName}/>
                             </div>
                             <div>
                                 {country.countryName}

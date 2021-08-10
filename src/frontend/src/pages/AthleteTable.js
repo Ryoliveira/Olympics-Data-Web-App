@@ -30,7 +30,6 @@ export const AthleteTable = () => {
                 else{
                     url += `/athletes?page=${currentPage}&size=${pageSize}`;
                 }
-                console.log(url);
                 const response = await fetch(url);
                 const data = await response.json();
                 setAthleteList(data);
@@ -80,10 +79,10 @@ export const AthleteTable = () => {
                     <th>Sport</th>
                 </tr>
                 {athletes.map(athlete => {
-                        return( <tr>
-                            <td><img src={athlete.photoUrl} className="AthletePhoto"/>
+                        return( <tr key={athlete.id}>
+                            <td><img src={athlete.photoUrl} className="AthletePhoto" alt={athlete.name}/>
                                 {athlete.name}</td>
-                            <td><img src={athlete.countryFlagUrl} className="CountryFlag"/>
+                            <td><img src={athlete.countryFlagUrl} className="CountryFlag" alt={athlete.country}/>
                                 {athlete.country}</td>
                             <td>{athlete.discipline}</td>
                         </tr> )

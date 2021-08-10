@@ -29,6 +29,8 @@ function App() {
                     <SportSelectionPage />
                 </Route>
             </Router>
+            <footer className="card-footer">Data provided by <a href={"https://olympics.com"}>Olympics.com</a>
+            </footer>
         </div>
     );
 }

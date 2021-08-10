@@ -20,14 +20,14 @@ export const Pagination = ({pageSize, totalElements, paginate, changePageSize}) 
                 <li className="pagination.first" />
                 {pageNumbers.map(number => (
                     <li key={number} className="page-item">
-                        <a onClick={() => paginate(number-1)} href="#" className="page-link">
+                        <button onClick={() => paginate(number-1)} className="page-link">
                             {number}
-                        </a>
+                        </button>
                     </li>
                 ))}
             </ul>
-            <select ref={selectPageSize}>
-                <option selected value={5}>5</option>
+            <select ref={selectPageSize} defaultValue={10}>
+                <option value={5}>5</option>
                 <option value={10}>10</option>
                 <option value={25}>25</option>
                 <option value={50}>50</option>

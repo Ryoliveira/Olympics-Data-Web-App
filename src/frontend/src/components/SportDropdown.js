@@ -1,5 +1,4 @@
 import React, {createRef, useEffect, useState} from 'react';
-import { useHistory } from 'react-router-dom';
 
 export const SportDropdown = ({changeSport}) => {
 
@@ -7,8 +6,7 @@ export const SportDropdown = ({changeSport}) => {
     const selectedSport = createRef();
 
     function handleChangeSport(){
-        let sport = selectedSport.current.value;
-        changeSport(sport);
+        changeSport(selectedSport.current.value);
     }
 
     useEffect(() => {
@@ -21,7 +19,7 @@ export const SportDropdown = ({changeSport}) => {
         }, []
     );
 
-    let sports = sportsList.sports;
+    const sports = sportsList.sports;
 
     if(sportsList.length === 0){
         return (
@@ -34,7 +32,7 @@ export const SportDropdown = ({changeSport}) => {
             <select ref={selectedSport}>
                 {sports.map(sport => {
                     return (
-                        <option value={sport.sportName}>{sport.sportName}</option>
+                        <option key={sport.sportName} value={sport.sportName}>{sport.sportName}</option>
                     )
                 })}
             </select>

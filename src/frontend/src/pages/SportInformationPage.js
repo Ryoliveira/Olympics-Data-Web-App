@@ -21,6 +21,8 @@ export const SportInformationPage = () => {
         )
     }
 
+
+
     //Code the html here first, then later lets extract it into a component (Tab Component)
     if (sportInformation.tabs.length > 1) {
         return (
@@ -29,18 +31,18 @@ export const SportInformationPage = () => {
                 <div>
                     {sportInformation.tabs.map(tab => {
                         return (
-                            <div>
+                            <div key={tab.tabName}>
                                 <h1>{tab.tabName}</h1>
                                 <div>
-                                    {tab.articleList.map(article => {
+                                    {tab.articleList.map((article, i) => {
                                         return (
-                                            <div>
+                                            <div key={i}>
                                                 <h3>{article.title}</h3>
                                                 <div>
-                                                    {article.contents.map(content => {
+                                                    {article.contents.map((content, i) => {
                                                         return (
                                                             <div>
-                                                                <p>{content}</p>
+                                                                <p key={i}>{content}</p>
                                                             </div>
                                                         )
                                                     })}
@@ -62,13 +64,13 @@ export const SportInformationPage = () => {
                 <div>
                     <h1>{sportInformation.sportName}</h1>
                     <div>
-                        {sportInformation.tabs[0].articleList.map(article => {
+                        {sportInformation.tabs[0].articleList.map((article, i) => {
                             return(
-                                <div>
+                                <div key={i}>
                                     <h3>{article.title}</h3>
-                                    {article.contents.map(content => {
+                                    {article.contents.map((content, i) => {
                                         return (
-                                            <p>{content}</p>
+                                            <p key={i}>{content}</p>
                                         )
                                     })}
                                 </div>

@@ -14,7 +14,6 @@ export const MedalStandingTable = () => {
                 const response = await fetch(`http://localhost:8080/${sport}/standings`);
                 const data = await response.json();
                 setTeamList(data);
-                console.log(teamList);
             };
             fetchTeams();
         }, [sport]
@@ -36,7 +35,7 @@ export const MedalStandingTable = () => {
 
     return (
         <div>
-            <SportDropdown changeSport={changeSport} />
+            <SportDropdown changeSport={changeSport}/>
             <h1>{sport}</h1>
             <table className="table table-striped">
                 <tbody>
@@ -50,20 +49,19 @@ export const MedalStandingTable = () => {
                     <th>Total</th>
                 </tr>
                 {teams.map(team => {
-                       return( <tr>
+                        return (<tr key={team.teamName}>
                             <td>{team.rank}</td>
-                           <td>{team.country}</td>
+                            <td>{team.country}</td>
                             <td>{team.teamName}</td>
                             <td>{team.goldMedalCount}</td>
                             <td>{team.silverMedalCount}</td>
-                           <td>{team.bronzeMedalCount}</td>
+                            <td>{team.bronzeMedalCount}</td>
                             <td>{team.totalMedals}</td>
-                        </tr> )
+                        </tr>)
                     }
                 )}
                 </tbody>
             </table>
-            <footer className="FooterInfo">Standings data provided by <a href={"https://olympics.com"}>olympics.com</a></footer>
         </div>
     );
 }
