@@ -16,4 +16,9 @@ public class CountryServiceImpl implements CountryService{
     public CountryList getCountryList() {
         return this.dataScrapeService.getCountryList();
     }
+
+    @Override
+    public CountryInformation getCountryInformation(String country) {
+        return this.dataScrapeService.scrapeCountryInformation(country);
+    }
 }

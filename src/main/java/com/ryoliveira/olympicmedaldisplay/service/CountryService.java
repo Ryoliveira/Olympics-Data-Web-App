@@ -5,5 +5,6 @@ import com.ryoliveira.olympicmedaldisplay.model.*;
 public interface CountryService {
 
     CountryList getCountryList();
+    CountryInformation getCountryInformation(String country);
 
 }

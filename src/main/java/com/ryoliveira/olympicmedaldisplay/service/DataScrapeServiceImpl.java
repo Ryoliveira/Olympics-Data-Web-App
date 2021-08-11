@@ -127,6 +127,28 @@ public class DataScrapeServiceImpl implements DataScrapeService {
         return new CountryList(countries);
     }
 
+    @Override
+    public CountryInformation scrapeCountryInformation(String country) {
+        String profileUrl = BASE_URL + "/tokyo-2020/olympic-games/en/results/all-sports/noc-profile-" + country + ".htm";
+
+
+        try{
+            Document doc = Jsoup.connect(profileUrl).get();
+
+            Element panelBio = doc.selectFirst("div.panel-bio");
+
+            LOGGER.info(panelBio.toString());
+
+
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
 
     //Todo: fix scraping with sports(Baseball/Softball && Cycling Road)
     @Override

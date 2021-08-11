@@ -7,5 +7,6 @@ public interface DataScrapeService {
     SportsList getSportsList();
     void scrapeAthletes();
     CountryList getCountryList();
+    CountryInformation scrapeCountryInformation(String country);
     SportInformation getSportInformation(String sport);
 }
