@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useHistory, useParams} from 'react-router-dom';
-import "./MedalStandingsPage.css";
+import "../css/MedalStandingsPage.css";
 import {SportDropdown} from "../components/SportDropdown";
 
 export const MedalStandingTable = () => {

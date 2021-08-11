@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import "./SportInfoTabs.css"
+import "../css/SportInfoTabs.css"
 
 export const SportInfoTabs = ({tabs}) => {
 

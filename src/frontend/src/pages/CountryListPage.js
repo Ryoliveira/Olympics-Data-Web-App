@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import "./CountryListPage.css";
+import "../css/CountryListPage.css";
 
 
 export const CountryListPage = () => {

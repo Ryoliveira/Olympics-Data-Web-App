@@ -1,0 +1,25 @@
+
+
+.center-content{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.center-content a{
+    font-size: 40px;
+    margin: 0 10px 0 10px;
+    text-decoration: none;
+}
+
+.center-content a:hover {
+    opacity: 0.5;
+}
+
+.center-content img {
+    margin-top: 20px;
+}
+
+body {
+    height: 100%;
+}

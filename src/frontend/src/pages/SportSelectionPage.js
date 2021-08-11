@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import "./SportSelectionPage.css";
+import "../css/SportSelectionPage.css";
 import {Link} from "react-router-dom";
 
 export const SportSelectionPage = () => {

@@ -1,9 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import "./AthleteTable.css"
-import "../App.scss"
+import "../css/AthleteTable.css"
+import "../css/App.scss"
 import {SportDropdown} from "../components/SportDropdown";
 import {Pagination} from "../components/Pagination";
 import {CountryDropdown} from "../components/CountryDropdown";
+import {Link} from "react-router-dom";
+
 
 
 export const AthleteTable = () => {
@@ -18,16 +20,13 @@ export const AthleteTable = () => {
     useEffect(() => {
             const fetchTeams = async () => {
                 let url = `http://localhost:8080`;
-                if(sport !== ALL_SPORTS && country !== ALL_COUNTRIES){
+                if (sport !== ALL_SPORTS && country !== ALL_COUNTRIES) {
                     url += `/${sport}/${country}/athletes?page=${currentPage}&size=${pageSize}`;
-                }
-                else if(sport !== ALL_SPORTS){
+                } else if (sport !== ALL_SPORTS) {
                     url += `/${sport}/athletes?page=${currentPage}&size=${pageSize}`;
-                }
-                else if(country !== ALL_COUNTRIES){
+                } else if (country !== ALL_COUNTRIES) {
                     url += `/team/${country}/athletes?page=${currentPage}&size=${pageSize}`;
-                }
-                else{
+                } else {
                     url += `/athletes?page=${currentPage}&size=${pageSize}`;
                 }
                 const response = await fetch(url);
@@ -65,7 +64,7 @@ export const AthleteTable = () => {
     return (
         <div>
             <div>
-                <SportDropdown changeSport={changeSport} />
+                <SportDropdown changeSport={changeSport}/>
                 <CountryDropdown changeCountry={changeCountry}/>
                 <h1>Athletes</h1>
                 <h1>Sport: {sport}</h1>
@@ -79,20 +78,32 @@ export const AthleteTable = () => {
                     <th>Sport</th>
                 </tr>
                 {athletes.map(athlete => {
-                        return( <tr key={athlete.id}>
-                            <td><img src={athlete.photoUrl} className="AthletePhoto" alt={athlete.name}/>
-                                {athlete.name}</td>
-                            <td><img src={athlete.countryFlagUrl} className="CountryFlag" alt={athlete.country}/>
-                                {athlete.country}</td>
-                            <td>{athlete.discipline}</td>
-                        </tr> )
+                        return (<tr key={athlete.id}>
+                            <td>
+                                <Link to={`/athlete/${athlete.name}`}>
+                                    <img src={athlete.photoUrl} className="AthletePhoto"
+                                         alt={athlete.name}/>
+                                    {athlete.name}
+                                </Link>
+                            </td>
+                            <td>
+                                <img src={athlete.countryFlagUrl} className="CountryFlag" alt={athlete.country}/>
+                                {athlete.country}
+                            </td>
+                            <td>
+                                <Link to={`/${athlete.discipline}/information`}>
+                                    {athlete.discipline}
+                                </Link>
+                            </td>
+
+                        </tr>)
                     }
                 )}
                 </tbody>
             </table>
-            <Pagination pageSize={pageSize} totalElements={athleteList.totalElements} paginate={paginate} changePageSize={changePageSize}/>
+            <Pagination pageSize={pageSize} totalElements={athleteList.totalElements} paginate={paginate}
+                        changePageSize={changePageSize}/>
             <br/>
-            <footer>Data provided by <a href={"https://olympics.com"}>olympics.com</a></footer>
         </div>
     );
 }

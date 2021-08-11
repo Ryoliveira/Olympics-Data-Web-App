@@ -1,5 +1,6 @@
 import React from "react";
-
+import logo from "../assests/svg/Olympic_Rings.svg"
+import {PATHS} from "../PathConstants";
 
 
 export const NavBar = () => {
@@ -10,19 +11,24 @@ export const NavBar = () => {
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
             <ul className="navbar-nav">
                 <li className="nav-item active">
-                    <a className="nav-link" href={"/"}>Home</a>
+                    <a className="nav-link" href={"/"}>
+                        <img src={logo} height="30px" width="auto" alt={""}/>
+                    </a>
+                </li>
+                <li className="nav-item active">
+                    <a className="nav-link" href={PATHS.HOME_PATH}>Home</a>
                 </li>
                 <li className="nav-item">
-                    <a className="nav-link" href={"/athletes"}>Athletes</a>
+                    <a className="nav-link" href={PATHS.ATHLETES_PATH}>Athletes</a>
                 </li>
                 <li className="nav-item">
-                    <a className="nav-link" href={"/All Sports/standings"}>Medal Standings</a>
+                    <a className="nav-link" href={PATHS.STANDINGS_PATH}>Medal Standings</a>
                 </li>
                 <li className="nav-item">
-                    <a className="nav-link" href={"/countries"}>Countries</a>
+                    <a className="nav-link" href={PATHS.COUNTRIES_PATH}>Countries</a>
                 </li>
                 <li className="nav-item">
-                    <a className="nav-link" href={"/sports"}>Sports</a>
+                    <a className="nav-link" href={PATHS.SPORTS_PATH}>Sports</a>
                 </li>
             </ul>
         </nav>
