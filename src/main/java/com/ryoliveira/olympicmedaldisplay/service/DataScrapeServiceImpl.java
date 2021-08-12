@@ -10,6 +10,7 @@ import org.springframework.stereotype.*;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.*;
 
 @Service
 public class DataScrapeServiceImpl implements DataScrapeService {
@@ -60,7 +61,7 @@ public class DataScrapeServiceImpl implements DataScrapeService {
             String cssDocString = Jsoup.connect(cssUrl).get().toString();
 
             Elements sportListItems = doc.select("li.tk-disciplines__item");
-            for(Element sportItem : sportListItems){
+            for (Element sportItem : sportListItems) {
                 String sportName = sportItem.selectFirst("h2").text();
 
                 // Selects the name of the classname in css file where icon svg url is located
@@ -73,7 +74,7 @@ public class DataScrapeServiceImpl implements DataScrapeService {
                 int endIndex = cssDocString.indexOf(sportIconStr) + sportIconStr.length();
                 String cssSelectorSub = cssDocString.substring(startIndex, endIndex);
                 // Get substring which only includes relative path to icon and append it to base url to create absolute path
-                String iconUrl = BASE_URL + cssSelectorSub.substring(cssSelectorSub.indexOf("(")+1);
+                String iconUrl = BASE_URL + cssSelectorSub.substring(cssSelectorSub.indexOf("(") + 1);
                 sportsList.add(new Sport(sportName, iconUrl));
             }
 
@@ -111,13 +112,18 @@ public class DataScrapeServiceImpl implements DataScrapeService {
         try {
             Document doc = Jsoup.connect(url).get();
             Elements countryListItems = doc.selectFirst("ul.list-unstyled").select("li");
-            countries.add(new Country("All Countries", null));
-            for(Element countryItem : countryListItems){
+            countries.add(new Country("All Countries", null, null));
+            for (Element countryItem : countryListItems) {
+                String countryProfileHref = countryItem.selectFirst("a").attr("href");
+                String profileKey = "profile-";
+                int startIndexSlice = countryProfileHref.indexOf(profileKey) + profileKey.length();
+                int endIndexSlice = countryProfileHref.indexOf(".htm");
+                String countryProfileStrId = countryProfileHref.substring(startIndexSlice, endIndexSlice);
                 String countryFlagUrl = BASE_URL + "/tokyo-2020/olympic-games/" + countryItem.selectFirst("img")
-                                                                                         .attr("src")
-                                                                                         .substring(9);
+                        .attr("src")
+                        .substring(9);
                 String countryName = countryItem.text();
-                Country country = new Country(countryName, countryFlagUrl);
+                Country country = new Country(countryName, countryFlagUrl, countryProfileStrId);
                 countries.add(country);
             }
         } catch (IOException e) {
@@ -131,22 +137,169 @@ public class DataScrapeServiceImpl implements DataScrapeService {
     public CountryInformation scrapeCountryInformation(String country) {
         String profileUrl = BASE_URL + "/tokyo-2020/olympic-games/en/results/all-sports/noc-profile-" + country + ".htm";
 
+        CountryInformation countryInformation = new CountryInformation();
 
-        try{
+        try {
             Document doc = Jsoup.connect(profileUrl).get();
 
             Element panelBio = doc.selectFirst("div.panel-bio");
+            Elements panelChildren = panelBio.children();
+            extractAndSetCurrentMedalsTable(panelBio, countryInformation);
+            extractAndSetCountryHighlightsInfo(panelBio, countryInformation);
+            extractAndSetCountryAdditionalInfo(panelBio, countryInformation);
+            extractAndSetCountryFlagbearerInfo(panelBio, panelChildren, countryInformation);
+            extractAndSetCountryParticipationInfo(panelBio, panelChildren, countryInformation);
+            extractAndSetCountryParticipationTables(panelBio, countryInformation);
 
-            LOGGER.info(panelBio.toString());
-
-
-
-
+            List<InfoSnippet> anthemInfo = extractGeneralInfo("Anthem", panelBio, panelChildren);
+            List<InfoSnippet> membershipInfo = extractGeneralInfo("Membership", panelBio, panelChildren);
+            List<InfoSnippet> officialsInfo = extractGeneralInfo("Officials", panelBio, panelChildren);
+            countryInformation.setAnthemInfo(anthemInfo);
+            countryInformation.setMembershipInfo(membershipInfo);
+            countryInformation.setOfficialsInfo(officialsInfo);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return null;
+        return countryInformation;
+    }
+
+    private void extractAndSetCurrentMedalsTable(Element panelBio, CountryInformation countryInformation) {
+        List<String> subStandingCategories = new ArrayList<>();
+        List<SubMedalStanding> medalsByDivision = new ArrayList<>();
+
+        Element standingTable = panelBio.selectFirst("table#medal-standing-table");
+        Elements columnCategories = standingTable.selectFirst("tr").select("th");
+        for (Element category : columnCategories.subList(1, columnCategories.size() - 1)) {
+            subStandingCategories.add(category.text());
+        }
+
+        Element table;
+        if ((table = standingTable.selectFirst("tbody")) != null) {
+            Elements tableData = table.select("td");
+
+            int rank = Integer.parseInt(tableData.get(0).text());
+
+
+            List<Integer> medalCounts = new ArrayList<>();
+
+            for (int i = 1, j = 0; i < tableData.size(); i++) {
+                if (j > 1 && j % 4 == 0) {
+                    String category = subStandingCategories.get((j - 1) / 4);
+                    medalsByDivision.add(new SubMedalStanding(category,
+                            medalCounts.get(0), medalCounts.get(1), medalCounts.get(2), medalCounts.get(3)));
+                    medalCounts.clear();
+                }
+                int medalCount = Integer.parseInt(tableData.get(i).text());
+                medalCounts.add(medalCount);
+                j++;
+            }
+
+            int totalRank = Integer.parseInt(tableData.get(tableData.size() - 1).text());
+
+            countryInformation.setRank(rank);
+            countryInformation.setMedalsByDivision(medalsByDivision);
+            countryInformation.setTotalRank(totalRank);
+        }
+    }
+
+    private void extractAndSetCountryHighlightsInfo(Element panelBio, CountryInformation countryInformation) {
+        Element highlightPortion = panelBio.selectFirst("label:contains(Highlights)").parent();
+        String highlightLabel = highlightPortion.selectFirst("label").text();
+        highlightPortion.selectFirst("label").remove();
+        List<String> highlightContent = new ArrayList<>(Arrays.asList(highlightPortion.html().replace("<p>", "").split("<br>")));
+        highlightContent.removeIf(x -> x.matches("\\s*"));
+        String content = highlightContent.stream().collect(Collectors.joining("<br><br>"));
+        countryInformation.setHighlights(new InfoSnippet(highlightLabel, content));
+    }
+
+    private void extractAndSetCountryAdditionalInfo(Element panelBio, CountryInformation countryInformation) {
+        List<InfoSnippet> linkSnippets = new ArrayList<>();
+
+        Element additionalInfo = panelBio.selectFirst("label:contains(Additional)").parent();
+        Elements linkLabels = additionalInfo.select("b");
+        Elements links = additionalInfo.select("a");
+        for (int i = 0; i < links.size(); i++) {
+            String linkLabel = linkLabels.get(i).text();
+            String linkUrl = links.get(i).attr("href");
+            linkSnippets.add(new InfoSnippet(linkLabel, linkUrl));
+        }
+        countryInformation.setLinks(linkSnippets);
+    }
+
+    private void extractAndSetCountryFlagbearerInfo(Element panelBio, Elements panelChildren, CountryInformation countryInformation) {
+        List<Athlete> flagbearers = new ArrayList<>();
+        Element flagbearerBanner = panelBio.selectFirst("a:contains(Flagbearers)").parent();
+        int flagbearerIndex = panelChildren.indexOf(flagbearerBanner) + 1;
+        Element flagBearerInfoDiv;
+        while ((flagBearerInfoDiv = panelChildren.get(flagbearerIndex)).tagName().equals("div")) {
+            String bearerName = flagBearerInfoDiv.selectFirst("span.d-none").text();
+            Athlete athlete = this.athleteService.getAthleteByName(bearerName);
+            flagbearers.add(athlete);
+            flagbearerIndex++;
+        }
+        countryInformation.setFlagbearerInfo(flagbearers);
+    }
+
+    private void extractAndSetCountryParticipationInfo(Element panelBio, Elements panelChildren, CountryInformation countryInformation) {
+        List<InfoSnippet> participationInfoSnippets = new ArrayList<>();
+
+        Element participationBanner = panelBio.selectFirst("a:contains(Participation)").parent();
+        int participationInfoStartIndex = panelChildren.indexOf(participationBanner) + 1;
+        int participationInfoEndIndex = participationInfoStartIndex + 2;
+        for (int i = participationInfoStartIndex; i < participationInfoEndIndex; i++) {
+            Element participationInfoDiv = panelChildren.get(i);
+            Element label = participationInfoDiv.selectFirst("label");
+            String labelText = label.text();
+            label.remove();
+            String infoText = participationInfoDiv.text();
+            participationInfoSnippets.add(new InfoSnippet(labelText, infoText));
+        }
+        countryInformation.setParticipationInfo(participationInfoSnippets);
+    }
+
+    private void extractAndSetCountryParticipationTables(Element panelBio, CountryInformation countryInformation) {
+        List<List<SubMedalStanding>> medalTables = new ArrayList<>();
+
+        Element participationTableDiv = panelBio.selectFirst("div.divBio");
+        Elements participationTables = participationTableDiv.select("table");
+        for (Element pTable : participationTables) {
+            List<SubMedalStanding> tableRows = new ArrayList<>();
+            Element tableBody = pTable.selectFirst("tbody");
+            for (Element row : tableBody.children()) {
+                Elements cols = row.children();
+                String category = cols.get(0).text();
+                int gold = Integer.parseInt(cols.get(1).text());
+                int silver = Integer.parseInt(cols.get(2).text());
+                int bronze = Integer.parseInt(cols.get(3).text());
+                int total = Integer.parseInt(cols.get(4).text());
+                tableRows.add(new SubMedalStanding(category, gold, silver, bronze, total));
+            }
+            medalTables.add(tableRows);
+        }
+        countryInformation.setMedalsBySport(medalTables.get(0));
+        countryInformation.setMedalsByYear(medalTables.get(1));
+    }
+
+    private List<InfoSnippet> extractGeneralInfo(String bannerName, Element panelBio, Elements panelChildren) {
+        List<InfoSnippet> infoSnippets = new ArrayList<>();
+
+        Element banner = panelBio.selectFirst("a:contains(" + bannerName + ")").parent();
+        int infoStartIndex = panelChildren.indexOf(banner) + 1;
+        int infoEndIndex = infoStartIndex + 3;
+        for (int i = infoStartIndex; i < infoEndIndex; i++) {
+            try {
+                Element infoDiv = panelChildren.get(i);
+                Element labelElement = infoDiv.selectFirst("label");
+                String infoLabel = labelElement.text();
+                labelElement.remove();
+                String info = infoDiv.text();
+                infoSnippets.add(new InfoSnippet(infoLabel, info));
+            } catch (NullPointerException e) {
+                LOGGER.error(e.getMessage());
+            }
+        }
+        return infoSnippets;
     }
 
 
@@ -160,18 +313,18 @@ public class DataScrapeServiceImpl implements DataScrapeService {
         String sportTitle = sport;
         List<Tab> sportTabs = new ArrayList<>();
         List<Article> articles = new ArrayList<>();
-        try{
+        try {
             Document doc = Jsoup.connect(sportsPageUrl).get();
             sportTitle = doc.selectFirst("h1.tk-details-sport__title").text();
             Elements tabs = doc.select("a.tk-article__tabs-item--title");
 
             LOGGER.info("Tabs Size: " + tabs.size());
 
-            if(tabs.size() == 0){
+            if (tabs.size() == 0) {
                 articles = parseArticlePage(doc);
                 sportTabs.add(new Tab(null, articles));
-            }else{
-                for(Element tab : tabs){
+            } else {
+                for (Element tab : tabs) {
                     String tabUrl = tab.attr("data-href");
                     LOGGER.info("Tab URL: " + tabUrl);
                     Document tabDoc = Jsoup.connect(tabUrl).get();
@@ -182,13 +335,13 @@ public class DataScrapeServiceImpl implements DataScrapeService {
             }
 
             LOGGER.info(articles.toString());
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return new SportInformation(sportTitle, sportTabs);
     }
 
-    private List<Article> parseArticlePage(Document articlePage){
+    private List<Article> parseArticlePage(Document articlePage) {
         List<Article> articles = new ArrayList<>();
 
         Element mainArticleBody = articlePage.selectFirst("div.tk-article__body");
@@ -207,13 +360,13 @@ public class DataScrapeServiceImpl implements DataScrapeService {
         return articles;
     }
 
-    private Article extractArticleContents(Element articleHeader, String contentTag){
+    private Article extractArticleContents(Element articleHeader, String contentTag) {
         String title = articleHeader.text();
         List<String> contents = new ArrayList<>();
 
         Element parent = articleHeader.parent();
 
-        for(Element sentence : parent.select(contentTag)){
+        for (Element sentence : parent.select(contentTag)) {
             contents.add(sentence.text());
         }
         Article article = new Article(title, contents);
