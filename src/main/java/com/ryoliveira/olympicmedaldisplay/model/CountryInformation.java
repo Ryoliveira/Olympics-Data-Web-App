@@ -2,7 +2,7 @@ package com.ryoliveira.olympicmedaldisplay.model;
 
 import java.util.*;
 
-public class CountryInformation {
+public class CountryInformation extends Country{
 
     private int rank;
 
@@ -29,9 +29,11 @@ public class CountryInformation {
     private List<InfoSnippet> participationInfo;
 
     public CountryInformation() {
+        super();
     }
 
-    public CountryInformation(int rank, int totalRank, List<SubMedalStanding> medalsByDivision, List<SubMedalStanding> medalsBySport, List<SubMedalStanding> medalsByYear, InfoSnippet highlights, List<InfoSnippet> links, List<InfoSnippet> anthemInfo, List<Athlete> flagbearerInfo, List<InfoSnippet> membershipInfo, List<InfoSnippet> officialsInfo, List<InfoSnippet> participationInfo) {
+    public CountryInformation(String countryName, String countryFlagUrl, int rank, int totalRank, List<SubMedalStanding> medalsByDivision, List<SubMedalStanding> medalsBySport, List<SubMedalStanding> medalsByYear, InfoSnippet highlights, List<InfoSnippet> links, List<InfoSnippet> anthemInfo, List<Athlete> flagbearerInfo, List<InfoSnippet> membershipInfo, List<InfoSnippet> officialsInfo, List<InfoSnippet> participationInfo) {
+        super(countryName, countryFlagUrl, null);
         this.rank = rank;
         this.totalRank = totalRank;
         this.medalsByDivision = medalsByDivision;

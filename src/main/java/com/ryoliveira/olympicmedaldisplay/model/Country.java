@@ -14,6 +14,10 @@ public class Country {
         this.profilePageStrId = profilePageStrId;
     }
 
+    public Country() {
+
+    }
+
     public String getCountryName() {
         return countryName;
     }

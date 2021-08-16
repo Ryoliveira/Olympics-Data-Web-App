@@ -9,6 +9,7 @@ import {SportSelectionPage} from "./pages/SportSelectionPage";
 import {SportInformationPage} from "./pages/SportInformationPage";
 import {AthletePage} from "./pages/AthletePage";
 import {HomePage} from "./pages/HomePage";
+import {CountryInfoPage} from "./pages/CountryInfoPage";
 
 function App() {
     return (
@@ -26,6 +27,9 @@ function App() {
                 </Route>
                 <Route path="/athlete/:athleteName">
                     <AthletePage />
+                </Route>
+                <Route path="/country/:countryProfileId/profile">
+                    <CountryInfoPage />
                 </Route>
                 <Route path="/athletes">
                     <AthleteTable />

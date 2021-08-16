@@ -142,6 +142,16 @@ public class DataScrapeServiceImpl implements DataScrapeService {
         try {
             Document doc = Jsoup.connect(profileUrl).get();
 
+            Element teamInfoDiv = doc.selectFirst("h1.NoSport");
+
+            int countryNameStartIndex = teamInfoDiv.text().indexOf("Team") + "Team".length();
+            int countryNameEndIndex = teamInfoDiv.text().indexOf("-");
+            String countryName = teamInfoDiv.text().substring(countryNameStartIndex, countryNameEndIndex).trim();
+            String countryFlagUrl = "https://olympics.com/tokyo-2020/olympic-games/" + teamInfoDiv.selectFirst("img").attr("src").substring(9);
+            countryInformation.setCountryName(countryName);
+            countryInformation.setCountryFlagUrl(countryFlagUrl);
+            countryInformation.setProfilePageStrId(country);
+
             Element panelBio = doc.selectFirst("div.panel-bio");
             Elements panelChildren = panelBio.children();
             extractAndSetCurrentMedalsTable(panelBio, countryInformation);
@@ -183,6 +193,8 @@ public class DataScrapeServiceImpl implements DataScrapeService {
 
             List<Integer> medalCounts = new ArrayList<>();
 
+
+            //Correctly parses and extracts medals from each division (Men, Women, Mixed, Open)
             for (int i = 1, j = 0; i < tableData.size(); i++) {
                 if (j > 1 && j % 4 == 0) {
                     String category = subStandingCategories.get((j - 1) / 4);
@@ -207,22 +219,28 @@ public class DataScrapeServiceImpl implements DataScrapeService {
         Element highlightPortion = panelBio.selectFirst("label:contains(Highlights)").parent();
         String highlightLabel = highlightPortion.selectFirst("label").text();
         highlightPortion.selectFirst("label").remove();
-        List<String> highlightContent = new ArrayList<>(Arrays.asList(highlightPortion.html().replace("<p>", "").split("<br>")));
+        List<String> highlightContent = new ArrayList<>(Arrays.asList(highlightPortion.html()
+                .replaceAll("<\\/*p>", "").split("<br>")));
         highlightContent.removeIf(x -> x.matches("\\s*"));
-        String content = highlightContent.stream().collect(Collectors.joining("<br><br>"));
+        String content = highlightContent.stream().collect(Collectors.joining("</br></br>"));
         countryInformation.setHighlights(new InfoSnippet(highlightLabel, content));
     }
 
     private void extractAndSetCountryAdditionalInfo(Element panelBio, CountryInformation countryInformation) {
         List<InfoSnippet> linkSnippets = new ArrayList<>();
 
-        Element additionalInfo = panelBio.selectFirst("label:contains(Additional)").parent();
-        Elements linkLabels = additionalInfo.select("b");
-        Elements links = additionalInfo.select("a");
-        for (int i = 0; i < links.size(); i++) {
-            String linkLabel = linkLabels.get(i).text();
-            String linkUrl = links.get(i).attr("href");
-            linkSnippets.add(new InfoSnippet(linkLabel, linkUrl));
+        try {
+
+            Element additionalInfo = panelBio.selectFirst("label:contains(Additional)").parent();
+            Elements linkLabels = additionalInfo.select("b");
+            Elements links = additionalInfo.select("a");
+            for (int i = 0; i < links.size(); i++) {
+                String linkLabel = linkLabels.get(i).text();
+                String linkUrl = links.get(i).attr("href");
+                linkSnippets.add(new InfoSnippet(linkLabel, linkUrl));
+            }
+        } catch (NullPointerException e) {
+            LOGGER.error("Additional Links Not Provided");
         }
         countryInformation.setLinks(linkSnippets);
     }
@@ -261,24 +279,28 @@ public class DataScrapeServiceImpl implements DataScrapeService {
     private void extractAndSetCountryParticipationTables(Element panelBio, CountryInformation countryInformation) {
         List<List<SubMedalStanding>> medalTables = new ArrayList<>();
 
-        Element participationTableDiv = panelBio.selectFirst("div.divBio");
-        Elements participationTables = participationTableDiv.select("table");
-        for (Element pTable : participationTables) {
-            List<SubMedalStanding> tableRows = new ArrayList<>();
-            Element tableBody = pTable.selectFirst("tbody");
-            for (Element row : tableBody.children()) {
-                Elements cols = row.children();
-                String category = cols.get(0).text();
-                int gold = Integer.parseInt(cols.get(1).text());
-                int silver = Integer.parseInt(cols.get(2).text());
-                int bronze = Integer.parseInt(cols.get(3).text());
-                int total = Integer.parseInt(cols.get(4).text());
-                tableRows.add(new SubMedalStanding(category, gold, silver, bronze, total));
+        try {
+            Element participationTableDiv = panelBio.selectFirst("div.divBio");
+            Elements participationTables = participationTableDiv.select("table");
+            for (Element pTable : participationTables) {
+                List<SubMedalStanding> tableRows = new ArrayList<>();
+                Element tableBody = pTable.selectFirst("tbody");
+                for (Element row : tableBody.children()) {
+                    Elements cols = row.children();
+                    String category = cols.get(0).text();
+                    int gold = Integer.parseInt(cols.get(1).text());
+                    int silver = Integer.parseInt(cols.get(2).text());
+                    int bronze = Integer.parseInt(cols.get(3).text());
+                    int total = Integer.parseInt(cols.get(4).text());
+                    tableRows.add(new SubMedalStanding(category, gold, silver, bronze, total));
+                }
+                medalTables.add(tableRows);
             }
-            medalTables.add(tableRows);
+            countryInformation.setMedalsBySport(medalTables.get(0));
+            countryInformation.setMedalsByYear(medalTables.get(1));
+        } catch (NullPointerException e) {
+            LOGGER.error("No Participation Tables Found");
         }
-        countryInformation.setMedalsBySport(medalTables.get(0));
-        countryInformation.setMedalsByYear(medalTables.get(1));
     }
 
     private List<InfoSnippet> extractGeneralInfo(String bannerName, Element panelBio, Elements panelChildren) {
@@ -336,7 +358,7 @@ public class DataScrapeServiceImpl implements DataScrapeService {
 
             LOGGER.info(articles.toString());
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error("getSportInformation(): " + e.getMessage());
         }
         return new SportInformation(sportTitle, sportTabs);
     }

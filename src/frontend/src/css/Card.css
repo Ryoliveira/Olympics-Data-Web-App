@@ -1,0 +1,12 @@
+.Card {
+    margin: 0 10px 10px 10px;
+}
+
+.CardContent {
+    display: grid;
+    grid-template-columns: auto;
+}
+
+label {
+    font-weight: bolder;
+}

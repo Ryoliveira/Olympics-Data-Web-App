@@ -1,0 +1,30 @@
+
+
+.AthletePhoto {
+    display: inline-block;
+    margin: 5px 0 5px 10px;
+}
+
+.AthletePhoto img {
+    height: 100px;
+    width: auto;
+}
+
+.FlagAndName {
+    display: inline-block;
+    vertical-align: middle;
+    horiz-align: center;
+}
+
+.FlagAndName img {
+    display: block;
+    margin: auto;
+    height: 50px;
+    width: auto;
+    border: solid 1px black;
+}
+
+.FlagAndName p {
+    font-size: 12px;
+    text-align: center;
+}
