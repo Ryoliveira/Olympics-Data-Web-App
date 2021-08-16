@@ -12,6 +12,9 @@ public class ScheduledTask {
 
     private final DataScrapeService dataScrapeService;
 
+    private final String PATH = "src\\main\\resources\\drivers\\chromedriver_92\\chromedriver.exe";
+    private final String DRIVER = "webdriver.chrome.driver";
+
     public ScheduledTask(DataScrapeService dataScrapeService){
         this.dataScrapeService = dataScrapeService;
     }
@@ -19,6 +22,11 @@ public class ScheduledTask {
     @Scheduled(initialDelay=0, fixedDelay=Long.MAX_VALUE)
     public void populateAthleteDatabase(){
         this.dataScrapeService.scrapeAthletes();
+    }
+
+    @Scheduled(initialDelay=0, fixedDelay=Long.MAX_VALUE)
+    public void setChromeDriverPath(){
+        System.setProperty(DRIVER, PATH);
     }
 
 
