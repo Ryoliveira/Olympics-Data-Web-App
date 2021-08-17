@@ -9,7 +9,6 @@ export const SportInformationPage = () => {
 
     useEffect(() => {
         const fetchSportInformation = async () => {
-            console.log(`http://localhost:8080/${sport}/information`);
             const response = await fetch(`http://localhost:8080/${sport}/information`);
             const data = await response.json();
             setSportInformation(data);

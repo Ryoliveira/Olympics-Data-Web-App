@@ -62,7 +62,7 @@ public class DataScrapeServiceImpl implements DataScrapeService {
 
             Elements sportListItems = doc.select("li.tk-disciplines__item");
             for (Element sportItem : sportListItems) {
-                String sportName = sportItem.selectFirst("h2").text();
+                String sportName = sportItem.selectFirst("h2").text().replaceAll("\\/", "");
 
                 // Selects the name of the classname in css file where icon svg url is located
                 String cssIconClassName = sportItem.selectFirst("div").attr("class").split("\\s")[1];
@@ -325,7 +325,7 @@ public class DataScrapeServiceImpl implements DataScrapeService {
     }
 
 
-    //Todo: fix scraping with sports(Baseball/Softball && Cycling Road)
+    //Todo: Sport Cycling Road needs its own unique scrap to retrieve race maps.
     @Override
     public SportInformation getSportInformation(String sport) {
         sport = sport.replaceAll("\\s+", "-");
@@ -375,10 +375,14 @@ public class DataScrapeServiceImpl implements DataScrapeService {
         Element eventProgramme = (eventProgrammeH2 == null) ? mainArticleBody.selectFirst("h3:contains(Event)") : eventProgrammeH2;
         Element essenceOfTheSport = mainArticleBody.selectFirst("h2:contains(Essence of the sport)");
 
-        articles.add(extractArticleContents(overview, "p"));
-        articles.add(extractArticleContents(eventProgramme, "li"));
-        articles.add(extractArticleContents(essenceOfTheSport, "p"));
+        try {
+            articles.add(extractArticleContents(overview, "p"));
+            articles.add(extractArticleContents(eventProgramme, "li"));
+            articles.add(extractArticleContents(essenceOfTheSport, "p"));
 
+        } catch (NullPointerException e) {
+            LOGGER.error("parseArticlePage(): " + e.getMessage());
+        }
         return articles;
     }
 
