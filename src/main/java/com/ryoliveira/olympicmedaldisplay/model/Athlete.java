@@ -2,6 +2,7 @@ package com.ryoliveira.olympicmedaldisplay.model;
 
 
 import javax.persistence.*;
+import java.util.*;
 
 @Entity
 @Table(name = "athlete")
@@ -24,6 +25,10 @@ public class Athlete {
     private String placeOfResidence;
     private String residenceCountry;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "misc_info_fid", referencedColumnName = "id")
+    private List<AthleteInfoSnippet> additionalInfo;
+
     public Athlete(String name, String photoUrl, String country, String countryFlagUrl, String discipline, String dob, int age, String gender, String height, String placeOfBirth, String birthCountry, String placeOfResidence, String residenceCountry) {
         this.name = name;
         this.photoUrl = photoUrl;
@@ -38,6 +43,7 @@ public class Athlete {
         this.birthCountry = birthCountry;
         this.placeOfResidence = placeOfResidence;
         this.residenceCountry = residenceCountry;
+        this.additionalInfo = new ArrayList<>();
     }
 
     public Athlete() {
@@ -156,10 +162,19 @@ public class Athlete {
         this.residenceCountry = residenceCountry;
     }
 
+    public List<AthleteInfoSnippet> getAdditionalInfo() {
+        return additionalInfo;
+    }
+
+    public void setAdditionalInfo(List<AthleteInfoSnippet> additionalInfo) {
+        this.additionalInfo = additionalInfo;
+    }
+
     @Override
     public String toString() {
         return "Athlete{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", photoUrl='" + photoUrl + '\'' +
                 ", country='" + country + '\'' +
                 ", countryFlagUrl='" + countryFlagUrl + '\'' +
@@ -172,6 +187,8 @@ public class Athlete {
                 ", birthCountry='" + birthCountry + '\'' +
                 ", placeOfResidence='" + placeOfResidence + '\'' +
                 ", residenceCountry='" + residenceCountry + '\'' +
+                ", additionalInfo=" + additionalInfo +
                 '}';
     }
 }
+

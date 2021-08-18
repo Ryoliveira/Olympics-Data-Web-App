@@ -53,12 +53,17 @@ export const CountryInfoPage = () => {
                         }
                     </div>
                     <div>
-                        <h1>Country Flagbearers</h1>
-                        <div className={"FlagbearerInfo"}>
-                            {countryInfo.flagbearerInfo.map(flagbearer => {
-                                return <AthleteCard athlete={flagbearer}/>
-                            })}
+                        {countryInfo.flagbearerInfo[0] !== null &&
+                        <div>
+                            <h1>Country Flagbearers</h1>
+                            <div className={"FlagbearerInfo"}>
+                                {countryInfo.flagbearerInfo.map(flagbearer => {
+                                    return <AthleteCard athlete={flagbearer}/>
+                                })}
+                            </div>
                         </div>
+                        }
+
                     </div>
                     <div>
                         {

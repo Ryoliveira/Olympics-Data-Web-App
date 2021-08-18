@@ -1,11 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import "../css/AthleteTable.css"
-import "../css/App.scss"
+import "../css/App.css"
 import {SportDropdown} from "../components/SportDropdown";
 import {Pagination} from "../components/Pagination";
 import {CountryDropdown} from "../components/CountryDropdown";
 import {Link} from "react-router-dom";
-
 
 
 export const AthleteTable = () => {

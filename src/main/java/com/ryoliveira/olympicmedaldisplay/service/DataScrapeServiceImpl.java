@@ -1,5 +1,6 @@
 package com.ryoliveira.olympicmedaldisplay.service;
 
+import com.mysql.cj.log.*;
 import com.ryoliveira.olympicmedaldisplay.model.*;
 import com.ryoliveira.olympicmedaldisplay.util.*;
 import org.jsoup.*;
@@ -62,7 +63,7 @@ public class DataScrapeServiceImpl implements DataScrapeService {
 
             Elements sportListItems = doc.select("li.tk-disciplines__item");
             for (Element sportItem : sportListItems) {
-                String sportName = sportItem.selectFirst("h2").text().replaceAll("\\/", "");
+                String sportName = sportItem.selectFirst("h2").text().replaceAll("\\/ ", "-");
 
                 // Selects the name of the classname in css file where icon svg url is located
                 String cssIconClassName = sportItem.selectFirst("div").attr("class").split("\\s")[1];
@@ -435,7 +436,7 @@ public class DataScrapeServiceImpl implements DataScrapeService {
             countryFlagUrl = fullPath + firstRow.selectFirst("img.flag").attr("src").substring(9);
 
             Element secondRow = rows.get(2);
-            discipline = secondRow.selectFirst("a").text();
+            discipline = secondRow.selectFirst("a").text().replace("/", "-");
 
             Element thirdRow = rows.get(3);
             Elements thirdRowDivs = thirdRow.select("div.col-md-6");
@@ -477,11 +478,31 @@ public class DataScrapeServiceImpl implements DataScrapeService {
             athlete = new Athlete(name, photoUrl, country, countryFlagUrl, discipline, dob, age, gender,
                     heightMeterAndFoot, placeOfBirth, birthCountry, placeOfResidence, residenceCountry);
 
-            LOGGER.info(athlete.toString());
+            Element additionalInfo = playerBioPanel.selectFirst("[name=\"bio\"]");
+            extractAndSetAthleteAdditionalInfo(athlete, additionalInfo);
+
         } catch (IOException | NullPointerException e) {
             LOGGER.error(e.getMessage());
         }
         return athlete;
+    }
+
+    private void extractAndSetAthleteAdditionalInfo(Athlete athlete, Element additionalInfo) {
+        List<AthleteInfoSnippet> athleteInfoSnippets = new ArrayList<>();
+        for(Element child : additionalInfo.select("div.form-group")){
+            if(child.select("table").size() == 0){
+                Element label = child.selectFirst("label");
+                String labelText = label.text();
+                label.remove();
+                String info = child.selectFirst("div").text().replaceAll(": ", "");
+                athleteInfoSnippets.add(new AthleteInfoSnippet(labelText, info));
+            }
+            if(child.select("a").size() > 0){
+                break;
+            }
+        }
+
+        athlete.setAdditionalInfo(athleteInfoSnippets);
     }
 
     private Team createTeam(Element teamRow) {

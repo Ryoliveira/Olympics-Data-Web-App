@@ -1,5 +1,5 @@
 import React from 'react';
-import './css/App.scss';
+import './css/App.css';
 import {MedalStandingTable} from "./pages/MedalStandingsPage";
 import {BrowserRouter as Router, Route} from 'react-router-dom';
 import {AthleteTable} from "./pages/AthleteTable";

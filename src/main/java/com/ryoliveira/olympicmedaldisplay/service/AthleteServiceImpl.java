@@ -46,8 +46,15 @@ public class AthleteServiceImpl implements AthleteService {
 
     @Override
     public Athlete getAthleteByName(String name) {
-        Optional<Athlete> optional  = this.athleteRepo.findByName(name);
-        return optional.orElseThrow(NoSuchElementException::new);
+        Athlete athlete = null;
+
+        try{
+            Optional<Athlete> optional  = this.athleteRepo.findByName(name);
+            athlete = optional.orElseThrow(NoSuchElementException::new);
+        }catch (NoSuchElementException e){
+            LOGGER.error("getAthleteByName(String name): " + e.getMessage());
+        }
+        return athlete;
     }
 
     @Override
@@ -55,6 +62,7 @@ public class AthleteServiceImpl implements AthleteService {
         Athlete result = null;
         if(athlete != null && !this.athleteRepo.exists(Example.of(athlete))){
             result = this.athleteRepo.save(athlete);
+            LOGGER.info(result.toString());
             LOGGER.info("Athlete Saved.");
         }else{
             LOGGER.error("Athlete already in database or null");

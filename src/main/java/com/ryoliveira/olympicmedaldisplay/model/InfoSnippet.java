@@ -11,6 +11,10 @@ public class InfoSnippet {
         this.text = text;
     }
 
+    public InfoSnippet() {
+
+    }
+
     public String getLabel() {
         return label;
     }

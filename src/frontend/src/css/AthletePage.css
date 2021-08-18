@@ -1,0 +1,21 @@
+.image {
+    height: 300px;
+    width: auto;
+    margin: 10px 5px 10px 5px;
+    border: solid 2px black;
+}
+
+.playerBio {
+    margin: 25px 0 25px 0;
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    border: solid 2px black;
+}
+
+.athleteDetails{
+    margin:auto;
+}
+
+.additionalInfo {
+
+}
