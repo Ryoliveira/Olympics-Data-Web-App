@@ -1,3 +1,10 @@
+.countryName {
+    font-family: Georama, serif;
+    font-size: 60px;
+    text-decoration: underline;
+}
+
+
 .ProfileHeader {
     text-align: center;
     margin-bottom: 10px;

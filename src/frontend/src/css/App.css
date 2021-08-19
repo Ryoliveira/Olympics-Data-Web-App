@@ -6,6 +6,7 @@ html{
 body {
   margin: 0 0 100px;
   padding-bottom: 25px;
+  background-color: hsl(0, 40%, 96%) !important;
 }
 
 footer{

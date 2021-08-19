@@ -35,7 +35,7 @@ export const CountryInfoPage = () => {
     return (
         <div className={"container"}>
             <div className={"ProfileHeader"}>
-                <h1 className={"CountryName"}>{countryInfo.countryName}</h1>
+                <h1 className={"countryName"}>{countryInfo.countryName}</h1>
                 <img src={countryInfo.countryFlagUrl}/>
             </div>
 
