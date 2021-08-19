@@ -30,14 +30,13 @@ export const CountryDropdown = ({changeCountry}) => {
 
     return (
         <div>
-            <select ref={countrySelectRef}>
+            <select className="btn btn-light btn-outline-dark" ref={countrySelectRef} onChange={handleChangeCountry}>
                 {countryList.countryList.map(country => {
                     return (
                         <option key={country.countryName} value={country.countryName}>{country.countryName}</option>
                     )
                 })}
             </select>
-            <button onClick={handleChangeCountry}>Change Country</button>
         </div>
     );
 

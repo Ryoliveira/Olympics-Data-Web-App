@@ -8,7 +8,7 @@ export const AthleteCard = ({athlete}) => {
     return (
         <div>
             <Link to={`/athlete/${athlete.name}`}>
-                <div className="AthletePhoto">
+                <div className="athletePhoto">
                     <img src={athlete.photoUrl} alt={""}/>
                 </div>
                 <div className="FlagAndName">

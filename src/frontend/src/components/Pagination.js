@@ -26,13 +26,12 @@ export const Pagination = ({pageSize, totalElements, paginate, changePageSize}) 
                     </li>
                 ))}
             </ul>
-            <select ref={selectPageSize} defaultValue={10}>
+            <select className="btn btn-light btn-outline-dark" ref={selectPageSize} defaultValue={10} onChange={changePageSizeRef}>
                 <option value={5}>5</option>
                 <option value={10}>10</option>
                 <option value={25}>25</option>
                 <option value={50}>50</option>
             </select>
-            <button onClick={changePageSizeRef}>Change</button>
         </nav>
     )
 

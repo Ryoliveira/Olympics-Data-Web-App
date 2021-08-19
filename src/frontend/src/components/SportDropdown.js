@@ -29,14 +29,13 @@ export const SportDropdown = ({changeSport}) => {
 
     return (
         <div>
-            <select ref={selectedSport}>
+            <select className="btn btn-light btn-outline-dark" ref={selectedSport} onChange={handleChangeSport}>
                 {sports.map(sport => {
                     return (
                         <option key={sport.sportName} value={sport.sportName}>{sport.sportName}</option>
                     )
                 })}
             </select>
-            <button onClick={handleChangeSport}>Go</button>
         </div>
     );
 }

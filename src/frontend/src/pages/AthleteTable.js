@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import "../css/AthleteTable.css"
-import "../css/App.css"
 import {SportDropdown} from "../components/SportDropdown";
 import {Pagination} from "../components/Pagination";
 import {CountryDropdown} from "../components/CountryDropdown";
@@ -61,45 +60,58 @@ export const AthleteTable = () => {
     let athletes = athleteList.content;
 
     return (
-        <div>
+        <div className="container">
             <div>
-                <SportDropdown changeSport={changeSport}/>
-                <CountryDropdown changeCountry={changeCountry}/>
-                <h1>Athletes</h1>
-                <h1>Sport: {sport}</h1>
-                <h1>Country: {country}</h1>
+                <div id="athleteTableTitle">
+                    <h1>Athletes</h1>
+                </div>
+                <div className="dropdownList">
+                    <div className="sportDropdown">
+                        <SportDropdown changeSport={changeSport}/>
+                    </div>
+                    <div className="countryDropdown">
+                        <CountryDropdown changeCountry={changeCountry}/>
+                    </div>
+                </div>
             </div>
-            <table className="table table-striped">
-                <tbody>
-                <tr>
-                    <th>Name</th>
-                    <th>Country</th>
-                    <th>Sport</th>
-                </tr>
-                {athletes.map(athlete => {
-                        return (<tr key={athlete.id}>
-                            <td>
-                                <Link to={`/athlete/${athlete.name}`}>
-                                    <img src={athlete.photoUrl} className="AthletePhoto"
-                                         alt={athlete.name}/>
-                                    {athlete.name}
-                                </Link>
-                            </td>
-                            <td>
-                                <img src={athlete.countryFlagUrl} className="CountryFlag" alt={athlete.country}/>
-                                {athlete.country}
-                            </td>
-                            <td>
-                                <Link to={`/${athlete.discipline}/information`}>
-                                    {athlete.discipline}
-                                </Link>
-                            </td>
+            <div>
+                <table className="table table-striped athleteTable">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Country</th>
+                        <th>Sport</th>
+                    </tr>
+                    </thead>
+                    <tbody>
 
-                        </tr>)
-                    }
-                )}
-                </tbody>
-            </table>
+                    {athletes.length === 0 && <td className="noAthletes" colSpan={3}>No Athletes to display</td>}
+
+                    {athletes.length > 0 && athletes.map(athlete => {
+                            return (<tr key={athlete.id}>
+                                <td>
+                                    <Link to={`/athlete/${athlete.name}`} className="tableLink">
+                                        <img src={athlete.photoUrl} className="athletePhoto"
+                                             alt={athlete.name}/>
+                                        {athlete.name}
+                                    </Link>
+                                </td>
+                                <td>
+                                    <img src={athlete.countryFlagUrl} className="countryFlag" alt={athlete.country}/>
+                                    <p className="countryNameAthleteTable">{athlete.country}</p>
+                                </td>
+                                <td>
+                                    <Link to={`/${athlete.discipline}/information`} className="tableLink">
+                                       {athlete.discipline}
+                                    </Link>
+                                </td>
+
+                            </tr>)
+                        }
+                    )}
+                    </tbody>
+                </table>
+            </div>
             <Pagination pageSize={pageSize} totalElements={athleteList.totalElements} paginate={paginate}
                         changePageSize={changePageSize}/>
             <br/>

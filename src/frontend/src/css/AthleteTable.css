@@ -1,10 +1,63 @@
-.AthletePhoto {
+#athleteTableTitle{
+    text-align: center;
+    margin-top: 30px;
+    font-family: Roboto Mono, monospace;
+    text-decoration: underline;
+}
+
+.dropdownList {
+    display: inline-block;
+    text-align: center;
+    font-size: 25px;
+}
+
+.sportDropdown{
+    float: left;
+    margin-right: 30px;
+}
+
+.countryDropdown{
+    float: right;
+}
+
+.athletePhoto {
     height: 100px;
     width: auto;
     border: solid black 2px;
+    float: left;
 }
 
-.CountryFlag {
+.countryFlag {
     height: 50px;
     width: auto;
+}
+
+.countryNameAthleteTable{
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.noAthletes {
+    text-align: center;
+    font-size: 30px;
+    font-weight: bolder;
+}
+
+
+.athleteTable{
+    text-align: center;
+}
+
+.tableLink {
+    text-decoration: none;
+    font-size: 24px;
+    color: black;
+}
+
+.tableLink:hover {
+    opacity: 0.7;
+}
+
+td {
+    width: 300px;
 }

@@ -1,11 +1,11 @@
 
 
-.AthletePhoto {
+.athletePhoto {
     display: inline-block;
     margin: 5px 0 5px 10px;
 }
 
-.AthletePhoto img {
+.athletePhoto img {
     height: 100px;
     width: auto;
 }
