@@ -2,11 +2,11 @@ package com.ryoliveira.olympicmedaldisplay.repo;
 
 import com.ryoliveira.olympicmedaldisplay.model.*;
 import org.springframework.data.domain.*;
-import org.springframework.data.jpa.repository.*;
+import org.springframework.data.mongodb.repository.*;
 
 import java.util.*;
 
-public interface AthleteRepository extends JpaRepository<Athlete, Long> {
+public interface AthleteMongoRepository extends MongoRepository<Athlete, String> {
 
     Page<Athlete> findAllByCountry(String country, Pageable pageable);
 
@@ -15,4 +15,5 @@ public interface AthleteRepository extends JpaRepository<Athlete, Long> {
     Page<Athlete> findAllByDiscipline(String sport, Pageable pageable);
 
     Page<Athlete> findAllByDisciplineAndCountry(String sport, String country, Pageable pageable);
+
 }

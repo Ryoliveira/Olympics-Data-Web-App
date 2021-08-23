@@ -40,23 +40,23 @@ public class DataController {
 
     @GetMapping("/team/{country}/athletes")
     public ResponseEntity<Page<Athlete>> getAllAthletesByCountry(@PathVariable String country, @RequestParam("page") int page, @RequestParam("size") int size) {
-        return new ResponseEntity<>(this.athleteService.getAllAthletesByCountry(country, page, size), HttpStatus.FOUND);
+        return new ResponseEntity<>(this.athleteService.getAllAthletesByCountry(country, page, size), HttpStatus.OK);
     }
 
     @GetMapping("/{sport}/athletes")
     public ResponseEntity<Page<Athlete>> getAllAthletesByDiscipline(@PathVariable String sport, @RequestParam("page") int page, @RequestParam("size") int size) {
-        return new ResponseEntity<>(this.athleteService.getAllAthletesByDiscipline(sport, page, size), HttpStatus.FOUND);
+        return new ResponseEntity<>(this.athleteService.getAllAthletesByDiscipline(sport, page, size), HttpStatus.OK);
     }
 
     @GetMapping("/athlete/{name}")
     public ResponseEntity<Athlete> getAthleteByName(@PathVariable String name) {
-        return new ResponseEntity<>(this.athleteService.getAthleteByName(name), HttpStatus.FOUND);
+        return new ResponseEntity<>(this.athleteService.getAthleteByName(name), HttpStatus.OK);
     }
 
     @GetMapping("/{sport}/{country}/athletes")
     public ResponseEntity<Page<Athlete>> getAthletesBySportAndCountry(@PathVariable("sport") String sport, @PathVariable("country") String country,
                                                                       @RequestParam("page") int pageNumber, @RequestParam("size") int pageSize) {
-        return new ResponseEntity<>(this.athleteService.getAthletesBySportAndCountry(sport, country, pageNumber, pageSize), HttpStatus.FOUND);
+        return new ResponseEntity<>(this.athleteService.getAthletesBySportAndCountry(sport, country, pageNumber, pageSize), HttpStatus.OK);
     }
 
     @GetMapping("/countries")
@@ -66,12 +66,12 @@ public class DataController {
 
     @GetMapping("/{sport}/information")
     public ResponseEntity<SportInformation> getSportInformation(@PathVariable String sport) {
-        return new ResponseEntity<>(this.sportService.getSportInformation(sport), HttpStatus.FOUND);
+        return new ResponseEntity<>(this.sportService.getSportInformation(sport), HttpStatus.OK);
     }
 
     @GetMapping("/information/{country}")
     public ResponseEntity<CountryInformation> getCountryInformation(@PathVariable String country) {
-        return new ResponseEntity<>(this.countryService.getCountryInformation(country), HttpStatus.FOUND);
+        return new ResponseEntity<>(this.countryService.getCountryInformation(country), HttpStatus.OK);
     }
 
 }

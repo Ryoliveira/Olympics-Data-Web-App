@@ -13,9 +13,9 @@ public class AthleteServiceImpl implements AthleteService {
 
     Logger LOGGER = LoggerFactory.getLogger(AthleteServiceImpl.class);
 
-    private final AthleteRepository athleteRepo;
+    private final AthleteMongoRepository athleteRepo;
 
-    public AthleteServiceImpl(AthleteRepository athleteRepo){
+    public AthleteServiceImpl(AthleteMongoRepository athleteRepo){
         this.athleteRepo = athleteRepo;
     }
 

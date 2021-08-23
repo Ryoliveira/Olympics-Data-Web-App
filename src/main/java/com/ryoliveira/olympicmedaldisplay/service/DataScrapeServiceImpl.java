@@ -1,6 +1,5 @@
 package com.ryoliveira.olympicmedaldisplay.service;
 
-import com.mysql.cj.log.*;
 import com.ryoliveira.olympicmedaldisplay.model.*;
 import com.ryoliveira.olympicmedaldisplay.util.*;
 import org.jsoup.*;
@@ -488,14 +487,14 @@ public class DataScrapeServiceImpl implements DataScrapeService {
     }
 
     private void extractAndSetAthleteAdditionalInfo(Athlete athlete, Element additionalInfo) {
-        List<AthleteInfoSnippet> athleteInfoSnippets = new ArrayList<>();
+        List<InfoSnippet> athleteInfoSnippets = new ArrayList<>();
         for(Element child : additionalInfo.select("div.form-group")){
             if(child.select("table").size() == 0){
                 Element label = child.selectFirst("label");
                 String labelText = label.text();
                 label.remove();
                 String info = child.selectFirst("div").text().replaceAll(": ", "");
-                athleteInfoSnippets.add(new AthleteInfoSnippet(labelText, info));
+                athleteInfoSnippets.add(new InfoSnippet(labelText, info));
             }
             if(child.select("a").size() > 0){
                 break;

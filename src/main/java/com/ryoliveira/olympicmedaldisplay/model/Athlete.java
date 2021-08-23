@@ -1,16 +1,13 @@
 package com.ryoliveira.olympicmedaldisplay.model;
 
+import org.springframework.data.annotation.*;
 
-import javax.persistence.*;
 import java.util.*;
 
-@Entity
-@Table(name = "athlete")
 public class Athlete {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private String id;
     private String name;
     private String photoUrl;
     private String country;
@@ -24,10 +21,7 @@ public class Athlete {
     private String birthCountry;
     private String placeOfResidence;
     private String residenceCountry;
-
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "misc_info_fid", referencedColumnName = "id")
-    private List<AthleteInfoSnippet> additionalInfo;
+    private List<InfoSnippet> additionalInfo;
 
     public Athlete(String name, String photoUrl, String country, String countryFlagUrl, String discipline, String dob, int age, String gender, String height, String placeOfBirth, String birthCountry, String placeOfResidence, String residenceCountry) {
         this.name = name;
@@ -50,11 +44,11 @@ public class Athlete {
 
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -162,11 +156,11 @@ public class Athlete {
         this.residenceCountry = residenceCountry;
     }
 
-    public List<AthleteInfoSnippet> getAdditionalInfo() {
+    public List<InfoSnippet> getAdditionalInfo() {
         return additionalInfo;
     }
 
-    public void setAdditionalInfo(List<AthleteInfoSnippet> additionalInfo) {
+    public void setAdditionalInfo(List<InfoSnippet> additionalInfo) {
         this.additionalInfo = additionalInfo;
     }
 
