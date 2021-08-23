@@ -324,8 +324,6 @@ public class DataScrapeServiceImpl implements DataScrapeService {
         return infoSnippets;
     }
 
-
-    //Todo: Sport Cycling Road needs its own unique scrap to retrieve race maps.
     @Override
     public SportInformation getSportInformation(String sport) {
         sport = sport.replaceAll("\\s+", "-");
@@ -404,78 +402,19 @@ public class DataScrapeServiceImpl implements DataScrapeService {
         String url = String.format("%s/tokyo-2020/olympic-games/%s", BASE_URL, athletePageUrl);
         String fullPath = String.format("%s/tokyo-2020/olympic-games/", BASE_URL);
 
-        Athlete athlete = null;
-
-        String name;
-        String photoUrl;
-        String country;
-        String countryFlagUrl;
-        String discipline;
-        String dob;
-        int age;
-        String gender;
-        String heightMeterAndFoot = null;
-        String placeOfBirth = null;
-        String birthCountry = null;
-        String placeOfResidence = null;
-        String residenceCountry = null;
+        Athlete athlete = new Athlete();
 
         try {
             Document doc = Jsoup.connect(url).get();
-            name = doc.selectFirst("h1").text();
+            extractAndSetAthleteName(athlete, doc);
 
             Element playerBioPanel = doc.selectFirst("div.panel-bio");
-
-            photoUrl = fullPath + playerBioPanel.selectFirst("img").attr("src").substring(9);
+            extractAndSetAthletePhoto(fullPath, athlete, playerBioPanel);
 
             Elements rows = playerBioPanel.selectFirst("div.row").select("div.row");
-
-            Element firstRow = rows.get(1);
-            country = firstRow.selectFirst("a.country").text();
-            countryFlagUrl = fullPath + firstRow.selectFirst("img.flag").attr("src").substring(9);
-
-            Element secondRow = rows.get(2);
-            discipline = secondRow.selectFirst("a").text().replace("/", "-");
-
-            Element thirdRow = rows.get(3);
-            Elements thirdRowDivs = thirdRow.select("div.col-md-6");
-
-            Elements thirdRowFirstCol = thirdRowDivs.get(0).select("div");
-            thirdRowFirstCol.select("label").remove();
-
-            dob = thirdRowFirstCol.get(1).text();
-            age = Integer.parseInt(thirdRowFirstCol.get(2).text());
-            gender = thirdRowFirstCol.get(3).text();
-
-            Elements thirdRowSecondCol = thirdRowDivs.get(1).select("div");
-
-            for (Element div : thirdRowSecondCol.subList(1, thirdRowSecondCol.size())) {
-                String divText = div.text();
-                if (divText.contains("Height")) {
-                    div.selectFirst("label").remove();
-                    heightMeterAndFoot = div.text();
-                }
-                if (divText.contains("Place of birth")) {
-                    div.selectFirst("label").remove();
-                    placeOfBirth = div.text();
-                }
-                if (divText.contains("Birth Country")) {
-                    div.selectFirst("label").remove();
-                    birthCountry = div.text();
-                }
-                if (divText.contains("Place of residence")) {
-                    div.selectFirst("label").remove();
-                    placeOfResidence = div.text();
-                }
-                if (divText.contains("Residence Country")) {
-                    div.selectFirst("label").remove();
-                    residenceCountry = div.text();
-                }
-
-            }
-
-            athlete = new Athlete(name, photoUrl, country, countryFlagUrl, discipline, dob, age, gender,
-                    heightMeterAndFoot, placeOfBirth, birthCountry, placeOfResidence, residenceCountry);
+            extractAndSetAtheleteCountryInformation(fullPath, athlete, rows);
+            extractAndSetAthleteDiscipline(athlete, rows);
+            extractAndSetAtleteBasicInformation(athlete, rows);
 
             Element additionalInfo = playerBioPanel.selectFirst("[name=\"bio\"]");
             extractAndSetAthleteAdditionalInfo(athlete, additionalInfo);
@@ -484,6 +423,91 @@ public class DataScrapeServiceImpl implements DataScrapeService {
             LOGGER.error(e.getMessage());
         }
         return athlete;
+    }
+
+    private void extractAndSetAthleteName(Athlete athlete, Document doc) {
+        String name;
+        name = doc.selectFirst("h1").text();
+        athlete.setName(name);
+    }
+
+    private void extractAndSetAthletePhoto(String fullPath, Athlete athlete, Element playerBioPanel) {
+        String photoUrl;
+        photoUrl = fullPath + playerBioPanel.selectFirst("img").attr("src").substring(9);
+        athlete.setPhotoUrl(photoUrl);
+    }
+
+    private void extractAndSetAtleteBasicInformation(Athlete athlete, Elements rows) {
+        String placeOfBirth;
+        String residenceCountry;
+        String dob;
+        String gender;
+        String heightMeterAndFoot;
+        String birthCountry;
+        int age;
+        String placeOfResidence;
+        Element thirdRow = rows.get(3);
+        Elements thirdRowDivs = thirdRow.select("div.col-md-6");
+
+        Elements thirdRowFirstCol = thirdRowDivs.get(0).select("div");
+        thirdRowFirstCol.select("label").remove();
+
+        dob = thirdRowFirstCol.get(1).text();
+        athlete.setDob(dob);
+        age = Integer.parseInt(thirdRowFirstCol.get(2).text());
+        athlete.setAge(age);
+        gender = thirdRowFirstCol.get(3).text();
+        athlete.setGender(gender);
+
+        Elements thirdRowSecondCol = thirdRowDivs.get(1).select("div");
+
+        for (Element div : thirdRowSecondCol.subList(1, thirdRowSecondCol.size())) {
+            String divText = div.text();
+            if (divText.contains("Height")) {
+                div.selectFirst("label").remove();
+                heightMeterAndFoot = div.text();
+                athlete.setHeight(heightMeterAndFoot);
+            }
+            if (divText.contains("Place of birth")) {
+                div.selectFirst("label").remove();
+                placeOfBirth = div.text();
+                athlete.setPlaceOfBirth(placeOfBirth);
+            }
+            if (divText.contains("Birth Country")) {
+                div.selectFirst("label").remove();
+                birthCountry = div.text();
+                athlete.setBirthCountry(birthCountry);
+            }
+            if (divText.contains("Place of residence")) {
+                div.selectFirst("label").remove();
+                placeOfResidence = div.text();
+                athlete.setPlaceOfResidence(placeOfResidence);
+
+            }
+            if (divText.contains("Residence Country")) {
+                div.selectFirst("label").remove();
+                residenceCountry = div.text();
+                athlete.setResidenceCountry(residenceCountry);
+            }
+
+        }
+    }
+
+    private void extractAndSetAthleteDiscipline(Athlete athlete, Elements rows) {
+        String discipline;
+        Element secondRow = rows.get(2);
+        discipline = secondRow.selectFirst("a").text().replace("/", "-");
+        athlete.setDiscipline(discipline);
+    }
+
+    private void extractAndSetAtheleteCountryInformation(String fullPath, Athlete athlete, Elements rows) {
+        String country;
+        String countryFlagUrl;
+        Element firstRow = rows.get(1);
+        country = firstRow.selectFirst("a.country").text();
+        athlete.setCountry(country);
+        countryFlagUrl = fullPath + firstRow.selectFirst("img.flag").attr("src").substring(9);
+        athlete.setCountryFlagUrl(countryFlagUrl);
     }
 
     private void extractAndSetAthleteAdditionalInfo(Athlete athlete, Element additionalInfo) {
