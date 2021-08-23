@@ -27,18 +27,20 @@ export const SportSelectionPage = () => {
     let sports = sportList.sports;
 
     return (
-
-        <div className="SportGrid">
-            {sports.slice(1).map(sport => {
-                return (
-                    <div className="SportItem" key={sport.sportName}>
-                        <Link to={`/${sport.sportName}/information`}>
-                            <img src={sport.sportIconUrl} className="SportIcon" alt={sport.sportName}/>
-                            <h3 className="SportName">{sport.sportName}</h3>
-                        </Link>
-                    </div>
-                );
-            })}
+        <div className="container">
+            <h1 className="sportsPageHeader">Sports</h1>
+            <div className="sportGrid">
+                {sports.slice(1).map(sport => {
+                    return (
+                        <div className="sportItem" key={sport.sportName}>
+                            <Link to={`/${sport.sportName}/information`}>
+                                <img src={sport.sportIconUrl} className="sportIcon" alt={sport.sportName}/>
+                                <h3 className="sportName">{sport.sportName}</h3>
+                            </Link>
+                        </div>
+                    );
+                })}
+            </div>
         </div>
     );
 }

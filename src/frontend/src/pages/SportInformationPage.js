@@ -23,10 +23,10 @@ export const SportInformationPage = () => {
     }
 
     return (
-        <div className="container">
-            <h1 className="display-1">{sportInformation.sportName}</h1>
-            <SportInfoTabs tabs={sportInformation.tabs}/>
-        </div>
+            <div className="container">
+                <h1 className="display-1">{sportInformation.sportName}</h1>
+                <SportInfoTabs tabs={sportInformation.tabs}/>
+            </div>
     )
 
 

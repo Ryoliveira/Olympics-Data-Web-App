@@ -13,7 +13,6 @@ body {
     display: flex;
 }
 .tabs {
-
     padding: 15px;
     text-align: center;
     width: 50%;
@@ -23,6 +22,7 @@ body {
     box-sizing: content-box;
     position: relative;
     outline: none;
+    margin-bottom: 50px;
 }
 
 .tabs:not(:last-child){

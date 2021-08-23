@@ -24,7 +24,7 @@ export const CountryListPage = () => {
     }
 
     return (
-        <div>
+        <div className="container">
             <h1 className="pageHeader">Countries</h1>
             <div className="divGrid">
                 {countryList.countryList.slice(1).map(country => {

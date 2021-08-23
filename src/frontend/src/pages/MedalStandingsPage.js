@@ -34,9 +34,10 @@ export const MedalStandingTable = () => {
     let teams = teamList.teams;
 
     return (
-        <div>
+        <div className="container">
+            <h1 className="tableTitle">Current Standings</h1>
+            <h1 className="currentSport">{sport}</h1>
             <SportDropdown changeSport={changeSport}/>
-            <h1>{sport}</h1>
             <table className="table table-striped">
                 <tbody>
                 <tr>

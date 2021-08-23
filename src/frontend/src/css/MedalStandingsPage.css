@@ -1,7 +1,12 @@
-caption {
-  font-size: 20px;
+.tableTitle {
+  font-size: 50px;
   text-decoration: underline;
-  font-weight: bolder;
+  text-align: center;
+}
+
+.currentSport{
+  font-size: 40px;
+  text-align: center;
 }
 
 table, th, tr, td{
